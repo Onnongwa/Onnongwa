@@ -1,15 +1,27 @@
-// src/App.tsx (JS 쓰면 App.js로, 내용 동일)
+// src/App.tsx
 import React, { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import Layout from "./components/layout/Layout";
 
-// 코드 스플리팅
+// 코드 스플리팅 (lazy)
 const HomePage = lazy(() => import("./pages/home/HomePage"));
 const RegisterOptionsPage = lazy(() => import("./pages/register/RegisterOptionsPage"));
+
+const RecommendOnboardingPage = lazy(
+    () => import("./pages/register/recommend/onboarding/RecommendOnboardingPage")
+);
 const AiRecommendPage = lazy(() => import("./pages/register/recommend/AiRecommendPage"));
-const GenerateOnboardingPage = lazy(() => import("./pages/register/GenerateOnboardingPage"));
+
+const GenerateOnboardingPage = lazy(
+    () => import("./pages/register/generate/onboarding/GenerateOnboardingPage")
+);
 const AiGeneratePage = lazy(() => import("./pages/register/generate/AiGeneratePage"));
+
+const ExperiencesPage = lazy(() => import("./pages/experience/ExperiencesPage"));
 const ExperienceDetailPage = lazy(() => import("./pages/experience/ExperienceDetailPage"));
+
+const LoginPage = lazy(() => import("./pages/auth/LoginPage"));
+const SignupPage = lazy(() => import("./pages/auth/SignupPage"));
 
 export default function App() {
     return (
@@ -35,14 +47,30 @@ export default function App() {
                             </Layout>
                         }
                     />
+
+                    {/* AI 추천 온보딩 → 정보 입력 */}
+                    <Route
+                        path="/register/ai-recommend/onboarding"
+                        element={
+                            <Layout header={{ title: "AI 체험 아이디어 추천", backTo: "/register" }}>
+                                <RecommendOnboardingPage />
+                            </Layout>
+                        }
+                    />
+
+                    {/* AI 추천 결과 (결과 페이지) */}
                     <Route
                         path="/register/ai-recommend"
                         element={
-                            <Layout header={{ title: "AI 추천 결과", backTo: "/register" }}>
+                            <Layout header={{ title: "AI 추천 결과", backTo: "/register/ai-recommend/onboarding" }}>
                                 <AiRecommendPage />
                             </Layout>
                         }
                     />
+                    {/* 온보딩에서 이 경로로 이동한다면 동일 페이지로 라우팅 */}
+                    <Route path="/register/ai-recommend/result" element={<Navigate to="/register/ai-recommend" replace />} />
+
+                    {/* AI 홍보글 자동 생성 온보딩 → 정보 입력 */}
                     <Route
                         path="/register/onboarding"
                         element={
@@ -51,6 +79,8 @@ export default function App() {
                             </Layout>
                         }
                     />
+
+                    {/* AI 홍보글 생성 결과/검토 */}
                     <Route
                         path="/register/ai-generate"
                         element={
@@ -60,12 +90,38 @@ export default function App() {
                         }
                     />
 
-                    {/* 체험 상세 */}
+                    {/* 체험 목록 / 상세 */}
+                    <Route
+                        path="/experiences"
+                        element={
+                            <Layout header={{ title: "체험 정보", backTo: "/" }}>
+                                <ExperiencesPage />
+                            </Layout>
+                        }
+                    />
                     <Route
                         path="/experiences/:id"
                         element={
-                            <Layout header={{ title: "체험 상세", backTo: "/" }}>
+                            <Layout header={{ title: "체험 상세", backTo: "/experiences" }}>
                                 <ExperienceDetailPage />
+                            </Layout>
+                        }
+                    />
+
+                    {/* 인증 */}
+                    <Route
+                        path="/auth/login"
+                        element={
+                            <Layout header={{ title: "로그인", backTo: "/" }}>
+                                <LoginPage />
+                            </Layout>
+                        }
+                    />
+                    <Route
+                        path="/auth/signup"
+                        element={
+                            <Layout header={{ title: "회원가입", backTo: "/auth/login" }}>
+                                <SignupPage />
                             </Layout>
                         }
                     />

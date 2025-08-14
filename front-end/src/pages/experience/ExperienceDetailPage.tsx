@@ -1,4 +1,4 @@
-// src/pages/experience/ExperienceDetailPage.tsx
+// 체험 상세
 import { useParams } from "react-router-dom";
 import {
     MapPin, Tag, Calendar, Users, Clock, Star,
