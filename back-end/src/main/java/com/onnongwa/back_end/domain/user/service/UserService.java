@@ -4,7 +4,6 @@ import com.onnongwa.back_end.domain.user.controller.SignupDTO;
 import com.onnongwa.back_end.domain.user.entity.Role;
 import com.onnongwa.back_end.domain.user.entity.User;
 import com.onnongwa.back_end.domain.user.repository.UserRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
