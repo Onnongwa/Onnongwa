@@ -3,9 +3,7 @@ package com.onnongwa.back_end.domain.user.entity;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import com.onnongwa.back_end.domain.recommend.entity.Recommend;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -13,6 +11,8 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,6 +24,7 @@ public class User {
     @Column(nullable = false)
     private String password;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
 
@@ -38,4 +39,5 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Farm> farms;
+
 }
