@@ -18,3 +18,8 @@ spring:
     level:
       org.hibernate.SQL: debug
       org.hibernate.type.descriptor.sql.BasicBinder: trace
+
+server:
+  servlet:
+    session:
+      timeout: 60m
