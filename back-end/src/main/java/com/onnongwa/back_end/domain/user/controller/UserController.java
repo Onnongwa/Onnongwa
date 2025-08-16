@@ -12,13 +12,14 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class UserController {
     private final UserService userService;
     private final UserRepository userRepository;
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupDTO signupDTO) {
+        System.out.println("asdasdasd");
         userService.signup(signupDTO);
         return ResponseEntity.ok().build();
     }
