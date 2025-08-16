@@ -10,13 +10,29 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
 
+    const API_BASE = "http://localhost:8080/api/v1"
+
     const handleLogin: React.FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
         setIsLoading(true);
 
         try {
-            // TODO: 실제 로그인 API 연동
-            await new Promise((r) => setTimeout(r, 1000));
+            const res = await fetch(`${API_BASE}/login`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" }, // 
+                body: JSON.stringify({ email, password }),        // (LoginDTO 필드명과 일치)
+                credentials: "include",                            // (JSESSIONID 쿠키 수신)
+            });
+
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(msg || "로그인 실패");
+            }
+
+            const data = await res.json(); // {id,email,role}
+            
+            localStorage.setItem("user", JSON.stringify(data));
+
             alert("로그인 성공!");
             navigate("/");
         } catch {

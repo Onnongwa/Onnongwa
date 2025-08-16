@@ -8,7 +8,7 @@ const defaultNav: NavItem[] = [
     { label: "체험등록", to: "/register" },
     { label: "체험정보", to: "#" },
     { label: "지도보기", to: "/map" },
-    { label: "로그인", to: "#" },
+    { label: "로그인", to: "/auth/login" },
 ];
 
 type Props = {
