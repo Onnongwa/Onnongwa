@@ -9,7 +9,7 @@ export default function SignupPage() {
         name: "",
         email: "",
         phone: "",
-        role: "user" as "user" | "farmer",
+        role: "USER" as "USER" | "OWNER",
         password: "",
         confirmPassword: "",
     });
@@ -19,6 +19,8 @@ export default function SignupPage() {
 
     const onChange = (key: keyof typeof form, val: string) =>
         setForm((p) => ({ ...p, [key]: val }));
+
+    const API_BASE = "http://localhost:8080";    
 
     const handleSignup: React.FormEventHandler<HTMLFormElement> = async (e) => {
         e.preventDefault();
@@ -33,8 +35,24 @@ export default function SignupPage() {
 
         setIsLoading(true);
         try {
-            // TODO: 실제 회원가입 API 연동
-            await new Promise((r) => setTimeout(r, 1200));
+            console.log("일단 실행은 됨");
+            const res = await fetch(`${API_BASE}/api/v1/signup`, {
+                method: "POST",                          
+                headers: { "Content-Type": "application/json" }, 
+                body: JSON.stringify({                    //(SignupDTO와 키 일치)
+                    name: form.name,
+                    email: form.email,
+                    phone: form.phone,
+                    role: form.role,
+                    password: form.password,
+                }),
+            });
+            console.log("일단 실행은 됨2");
+
+            if (!res.ok) {
+                const msg = await res.text();
+                throw new Error(msg || "회원가입 실패");
+            }
             alert("회원가입이 완료되었습니다! 로그인 해주세요.");
             navigate("/auth/login");
         } catch {
@@ -123,9 +141,9 @@ export default function SignupPage() {
                                         <input
                                             type="radio"
                                             name="role"
-                                            value="user"
-                                            checked={form.role === "user"}
-                                            onChange={() => onChange("role", "user")}
+                                            value="USER"
+                                            checked={form.role === "USER"}
+                                            onChange={() => onChange("role", "USER")}
                                         />
                                         <div>
                                             <div className="font-medium">일반 회원</div>
@@ -138,9 +156,9 @@ export default function SignupPage() {
                                         <input
                                             type="radio"
                                             name="role"
-                                            value="farmer"
-                                            checked={form.role === "farmer"}
-                                            onChange={() => onChange("role", "farmer")}
+                                            value="OWNER"
+                                            checked={form.role === "OWNER"}
+                                            onChange={() => onChange("role", "OWNER")}
                                         />
                                         <div>
                                             <div className="font-medium">농장주</div>

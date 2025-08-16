@@ -18,7 +18,7 @@ public class UserService {
                 .password(signupDTO.getPassword())
                 .name(signupDTO.getName())
                 .phone(signupDTO.getPhone())
-                .role(Role.valueOf(signupDTO.getRole()))
+                .role(signupDTO.getRole())
                 .build();
 
         userRepository.save(user);
