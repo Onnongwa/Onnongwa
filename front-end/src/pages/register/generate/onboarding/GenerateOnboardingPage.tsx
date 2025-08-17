@@ -11,6 +11,8 @@ type ScheduleItem = { time: string; activity: string };
 export default function GenerateOnboardingPage() {
     const navigate = useNavigate();
 
+    const API_BASE = "http://localhost:8080/api/v1"
+    const IMAGE_SERVER_BASE = "http://localhost:8080";
     // 진행 단계
     const totalSteps = 12;
     const [currentStep, setCurrentStep] = useState(1);
@@ -126,7 +128,7 @@ export default function GenerateOnboardingPage() {
         formData.append("file", file);
 
         try {
-            const response = await fetch("/api/v1/experience/imgupload", {
+            const response = await fetch(`${API_BASE}/experience/imgupload`, {
                 method: "POST",
                 body: formData,
             });
@@ -246,7 +248,7 @@ export default function GenerateOnboardingPage() {
                                             const uploadedUrl = await uploadImage(file);
                                             if (!uploadedUrl) return;
 
-                                            const url = URL.createObjectURL(file);
+                                            const url =`${IMAGE_SERVER_BASE}${uploadedUrl}`;
                                             setImageUrl(url);
                                         }}
                                     />
