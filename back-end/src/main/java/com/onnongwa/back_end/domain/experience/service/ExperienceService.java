@@ -8,7 +8,10 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDTO;
 
 @Service
 public class ExperienceService {
@@ -34,5 +37,12 @@ public class ExperienceService {
 		Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
 		return IMAGE_BASE_URL + savedFileName;
+	}
+
+	public void generateExperienceContent(ExpRegisterDTO dto) {
+
+		System.out.println(dto.toString());
+
+
 	}
 }
