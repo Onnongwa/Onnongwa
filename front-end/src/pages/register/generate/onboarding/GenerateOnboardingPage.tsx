@@ -18,14 +18,11 @@ export default function GenerateOnboardingPage() {
     // 폼 상태
     // step 1
     const [title, setTitle] = useState("");
-
     // step 2
     const [imageUrl, setImageUrl] = useState<string | null>(null);
-
     // step 3
     const [region, setRegion] = useState(""); // 도 시 군
     const [address, setAddress] = useState(""); // 상세 주소
-
     // step 4
     const [placeType, setPlaceType] = useState<"indoor" | "outdoor">("indoor"); // 실내 or 실외
     // step 5
@@ -56,6 +53,7 @@ export default function GenerateOnboardingPage() {
     const progress = (currentStep / totalSteps) * 100;
 
 
+    // 유효성 검사
     const validateStep = (step: number): boolean => {
         switch (step) {
             case 1:
@@ -120,14 +118,73 @@ export default function GenerateOnboardingPage() {
 
     const daysOfWeek = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"];
 
-    const finish = () => {
+
+    // 폼데이터로 전송할 수 없기에 이미지 등록시 서버에 이미지를 먼저 저장하고 url을 json으로 보내는 방식 채택
+    // step2. 이미지 업로드 함수
+    const uploadImage = async (file: File): Promise<string | null> => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch("/api/v1/experience/imgupload", {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("이미지 업로드 실패:", errorText);
+                alert("이미지 업로드에 실패했습니다.");
+                return null;
+            }
+
+            const data = await response.json();
+            // 서버에서 반환된 이미지 URL
+            return data.url;
+        } catch (error) {
+            console.error("이미지 업로드 중 오류:", error);
+            alert("이미지 업로드 중 오류가 발생했습니다.");
+            return null;
+        }
+    };
+
+    const finish = async ()  => {
+
         const payload = {
-            title, region, address, placeType, regionType, description, crops, price,
+            title,imageUrl, region, address, placeType, regionType, description, crops, price,
             scheduleItems, startTime, endTime, selectedClosedDays,
             minParticipants, maxParticipants, host: { hostName, hostPhone, hostEmail, farmName },
         };
         console.log("onboarding payload:", payload);
-        navigate("/register/ai-generate/review");
+
+        try {
+            const response = await fetch("/api/v1/experience/onboarding", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json", // JSON 형식임을 명시
+                },
+                body: JSON.stringify(payload), // 객체를 JSON 문자열로 변환
+            });
+
+            if (!response.ok) {
+                // 200~299 범위가 아닌 경우 에러 처리
+                const errorText = await response.text();
+                console.error("서버 응답 오류:", errorText);
+                alert("체험 등록에 실패했습니다.");
+                return;
+            }
+
+            const result = await response.json();
+            console.log("서버 응답:", result);
+
+            // 성공 시 다음 페이지로 이동
+            navigate("/register/ai-generate/review");
+        } catch (error) {
+            console.error("요청 실패:", error);
+            alert("서버와 통신 중 오류가 발생했습니다.");
+        }
+
+        // navigate("/register/ai-generate/review");
     };
 
     const Step = () => {
@@ -182,9 +239,13 @@ export default function GenerateOnboardingPage() {
                                         type="file"
                                         accept="image/*"
                                         className="hidden"
-                                        onChange={(e) => {
+                                        onChange={ async ( e) => {
                                             const file = e.target.files?.[0];
                                             if (!file) return;
+
+                                            const uploadedUrl = await uploadImage(file);
+                                            if (!uploadedUrl) return;
+
                                             const url = URL.createObjectURL(file);
                                             setImageUrl(url);
                                         }}
