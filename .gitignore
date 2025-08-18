@@ -29,3 +29,5 @@ replay_pid*
 
 #img upload file
 ./uploads
+
+.env
