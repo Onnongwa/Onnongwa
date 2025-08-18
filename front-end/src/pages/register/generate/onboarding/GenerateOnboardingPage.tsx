@@ -179,8 +179,7 @@ export default function GenerateOnboardingPage() {
             const result = await response.json();
             console.log("서버 응답:", result);
 
-            // 성공 시 다음 페이지로 이동
-            navigate("/register/ai-generate/review");
+            // navigate("/register/ai-generate/review");
         } catch (error) {
             console.error("요청 실패:", error);
             alert("서버와 통신 중 오류가 발생했습니다.");
