@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDTO;
 import com.onnongwa.back_end.domain.experience.service.ExperienceService;
+import com.onnongwa.back_end.open_api.service.OpenApiService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -23,16 +24,14 @@ import lombok.RequiredArgsConstructor;
 public class ExperienceController {
 
 	private final ExperienceService experienceService;
+	private final OpenApiService openApiService;
 
 	@PostMapping("/onboarding")
 	public ResponseEntity<?> generateExperienceContent(@RequestBody ExpRegisterDTO dto){
 
-		experienceService.generateExperienceContent(dto);
-
-		return ResponseEntity.ok(null);
+		return ResponseEntity.ok(openApiService.getChatCompletion(dto.toString()));
 
 	}
-
 
 	@PostMapping("/imgupload")
 	public ResponseEntity<?> imageUpload(@RequestParam("file")MultipartFile file) throws IOException {

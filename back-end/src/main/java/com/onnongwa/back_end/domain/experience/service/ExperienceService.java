@@ -8,16 +8,22 @@ import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDTO;
+import com.onnongwa.back_end.open_api.dto.AiOnboardingDTO;
+import com.onnongwa.back_end.open_api.service.OpenApiService;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class ExperienceService {
 
 	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 	private final String IMAGE_BASE_URL = "/images/";
+
+	private final OpenApiService openApiService;
 
 	public String saveImageAndGetUrl(MultipartFile file) throws IOException{
 		if (file.isEmpty()){
@@ -39,10 +45,4 @@ public class ExperienceService {
 		return IMAGE_BASE_URL + savedFileName;
 	}
 
-	public void generateExperienceContent(ExpRegisterDTO dto) {
-
-		System.out.println(dto.toString());
-
-
-	}
 }
