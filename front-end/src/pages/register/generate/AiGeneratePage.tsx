@@ -5,6 +5,8 @@ import {
     Edit, CheckCircle, MapPin, Clock, Users, Calendar, Tag,
     Mail, Phone, Sparkles
 } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
 // (임시) 등록 API — 나중에 실제 백엔드 연동으로 교체
 async function registerExperience(payload: unknown): Promise<{success:boolean; message:string}> {
@@ -94,7 +96,73 @@ const initialData: ExperienceData = {
 };
 
 export default function AiGenerateReviewPage() {
-    const [data] = useState<ExperienceData>(initialData);
+
+    const location = useLocation();
+    const { result } = location.state || {}; // 안전하게 구조 분해
+
+    useEffect(() => {
+        console.log("이전 페이지에서 받은 데이터:", result);
+    }, [result]);
+
+    const [data, setData] = useState<ExperienceData>(() => {
+        if (!result) return {} as ExperienceData;
+
+        // placeType, regionType 한국어 변환
+        const placeTypeMap: Record<string, string> = { indoor: "실내", outdoor: "실외" };
+        const regionTypeMap: Record<string, string> = { rural: "농촌", fishing: "어촌" };
+
+        // selectedClosedDays 정리
+        const rawClosedDays = result.selectedClosedDays || [];
+
+        const cleaned = rawClosedDays.join(",").replace(/[\[\]]/g, "");
+
+        const closedDays = cleaned
+            .split(/(요일)/)          // "요일"을 기준으로 split
+            .map(s => s.trim())       // 공백 제거
+            .filter(s => s !== "")    // 빈 문자열 제거
+            .reduce((acc: string[], curr, idx, arr) => {
+                if (curr === "요일") {
+                    acc[acc.length - 1] += curr; // 이전 값 뒤에 "요일" 붙이기
+                } else if (curr !== ",") {
+                    acc.push(curr);
+                }
+                return acc;
+            }, []);
+
+        // scheduleItems 변환
+        const schedule = (result.scheduleItems || []).map((s: string) => {
+            const [time, ...rest] = s.split("-");
+            return { time: time.trim(), activity: rest.join("-").trim() };
+        });
+
+        return {
+            title: result.title,
+            aiPromotionalText: result.description || "",
+            location: result.region,
+            address: result.address,
+            placeType: placeTypeMap[result.placeType] || "실내",
+            regionType: regionTypeMap[result.regionType] || "농촌",
+            crops: result.crops,
+            price: String(result.price),
+            duration: "약 " + result.duration + "시간", // 운영 시간은 추후 입력
+            availableDates: closedDays,
+            operatingHours: `${result.startTime || ""} - ${result.endTime || ""}`,
+            closedDays: closedDays,
+            minParticipants: result.minParticipants,
+            maxParticipants: result.maxParticipants,
+            schedule,
+            highlights: result.highlights,
+            inclusions: result.inclusions,
+            hashtags: result.hashtags,
+            host: {
+                name: result.hostName,
+                phone: result.hostPhone,
+                email: result.hostEmail,
+                farmName: result.farmName
+            },
+            imageUrl: result.imageUrl
+        };
+    });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // 편집 토글
