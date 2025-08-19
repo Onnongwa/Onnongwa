@@ -29,14 +29,53 @@ public class ChatResponseParser {
 				.collect(Collectors.toList());
 		}
 
+		// selectedClosedDays는 ,로 분리
+		List<String> selectedClosedDays = new ArrayList<>();
+		if (map.containsKey("selectedClosedDays")) {
+			selectedClosedDays = Arrays.stream(map.get("selectedClosedDays").split(","))
+				.map(String::trim)
+				.collect(Collectors.toList());
+		}
+
+		// highlights, inclusions, hashtags는 ,로 분리
+		List<String> highlights = new ArrayList<>();
+		if (map.containsKey("highlights")) {
+			highlights = Arrays.stream(map.get("highlights").split(","))
+				.map(String::trim)
+				.collect(Collectors.toList());
+		}
+
+		List<String> inclusions = new ArrayList<>();
+		if (map.containsKey("inclusions")) {
+			inclusions = Arrays.stream(map.get("inclusions").split(","))
+				.map(String::trim)
+				.collect(Collectors.toList());
+		}
+
+		List<String> hashtags = new ArrayList<>();
+		if (map.containsKey("hashtags")) {
+			hashtags = Arrays.stream(map.get("hashtags").split(","))
+				.map(String::trim)
+				.collect(Collectors.toList());
+		}
+
 		return new AiOnboardingDTO(
 			map.getOrDefault("title", ""),
 			map.getOrDefault("region", ""),
 			map.getOrDefault("address", ""),
+			map.getOrDefault("placeType", ""),
+			map.getOrDefault("regionType", ""),
 			map.getOrDefault("description", ""),
+			map.getOrDefault("duration", ""),
 			map.getOrDefault("crops", ""),
 			Integer.parseInt(map.getOrDefault("price", "0")),
 			scheduleItems,
+			highlights,
+			inclusions,
+			hashtags,
+			map.getOrDefault("startTime", ""),
+			map.getOrDefault("endTime", ""),
+			selectedClosedDays,
 			Integer.parseInt(map.getOrDefault("minParticipants", "0")),
 			Integer.parseInt(map.getOrDefault("maxParticipants", "0")),
 			map.getOrDefault("hostName", ""),
