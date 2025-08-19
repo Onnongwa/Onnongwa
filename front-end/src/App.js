@@ -85,7 +85,7 @@ export default function App() {
                         path="/register/ai-generate"
                         element={
                             <Layout header={{ title: "체험 등록 정보 확인", backTo: "/register/onboarding" }}>
-                                <AiGeneratePage />
+                                <GenerateOnboardingPage />
                             </Layout>
                         }
                     />
