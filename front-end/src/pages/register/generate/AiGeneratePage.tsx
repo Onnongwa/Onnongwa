@@ -50,24 +50,6 @@ export default function AiGenerateReviewPage() {
         const placeTypeMap: Record<string, string> = { indoor: "실내", outdoor: "실외" };
         const regionTypeMap: Record<string, string> = { rural: "농촌", fishing: "어촌" };
 
-        // selectedClosedDays 정리
-        const rawClosedDays = result.selectedClosedDays || [];
-
-        const cleaned = rawClosedDays.join(",").replace(/[\[\]]/g, "");
-
-        const closedDays = cleaned
-            .split(/(요일)/)          // "요일"을 기준으로 split
-            .map(s => s.trim())       // 공백 제거
-            .filter(s => s !== "")    // 빈 문자열 제거
-            .reduce((acc: string[], curr, idx, arr) => {
-                if (curr === "요일") {
-                    acc[acc.length - 1] += curr; // 이전 값 뒤에 "요일" 붙이기
-                } else if (curr !== ",") {
-                    acc.push(curr);
-                }
-                return acc;
-            }, []);
-
         // scheduleItems 변환
         const schedule = (result.scheduleItems || []).map((s: string) => {
             const [time, ...rest] = s.split("-");
@@ -84,9 +66,9 @@ export default function AiGenerateReviewPage() {
             crops: result.crops,
             price: String(result.price),
             duration: "약 " + result.duration + "시간", // 운영 시간은 추후 입력
-            availableDates: closedDays,
+            availableDates: result.selectedClosedDays ,
             operatingHours: `${result.startTime || ""} - ${result.endTime || ""}`,
-            closedDays: closedDays,
+            closedDays: result.selectedClosedDays ,
             minParticipants: result.minParticipants,
             maxParticipants: result.maxParticipants,
             schedule,
@@ -234,8 +216,12 @@ export default function AiGenerateReviewPage() {
                                 </div>
                                 <div
                                     className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
-                                    <Calendar className="h-6 w-6 mb-2"/><span
-                                    className="font-medium">{data.availableDates}</span>
+                                    <Calendar className="h-6 w-6 mb-2"/>
+                                    <span className="font-medium">
+        {Array.isArray(data.availableDates)
+            ? data.availableDates.join(", ")  // 배열이면 ,로 연결
+            : data.availableDates.split(/[,]/).join(", ")} {/* 문자열이면 , 기준으로 split */}
+    </span>
                                 </div>
                             </div>
                         )}
