@@ -12,7 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDTO;
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpOnboardingDto;
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.domain.experience.service.ExperienceService;
 import com.onnongwa.back_end.open_api.service.OpenApiService;
 
@@ -26,9 +27,17 @@ public class ExperienceController {
 	private final ExperienceService experienceService;
 	private final OpenApiService openApiService;
 
-	@PostMapping("/onboarding")
-	public ResponseEntity<?> generateExperienceContent(@RequestBody ExpRegisterDTO dto){
 
+	@PostMapping
+	public ResponseEntity<?> registerExperience(@RequestBody ExpRegisterDto dto){
+
+		System.out.println("전달 테스트 : \n" + dto.toString());
+		experienceService.registerExperience(dto);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	@PostMapping("/onboarding")
+	public ResponseEntity<?> generateExperienceContent(@RequestBody ExpOnboardingDto dto){
 		return ResponseEntity.ok(openApiService.getChatCompletion(dto.toString()));
 
 	}
@@ -37,7 +46,6 @@ public class ExperienceController {
 	public ResponseEntity<?> imageUpload(@RequestParam("file")MultipartFile file) throws IOException {
 
 		String url = experienceService.saveImageAndGetUrl(file);
-
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(Map.of("url", url));
 	}

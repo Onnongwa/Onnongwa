@@ -10,8 +10,7 @@ import java.util.UUID;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDTO;
-import com.onnongwa.back_end.open_api.dto.AiOnboardingDTO;
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.open_api.service.OpenApiService;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +22,9 @@ public class ExperienceService {
 	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 	private final String IMAGE_BASE_URL = "/uploads/";
 
-	private final OpenApiService openApiService;
+	public void registerExperience(ExpRegisterDto dto){
+
+	}
 
 	public String saveImageAndGetUrl(MultipartFile file) throws IOException{
 		if (file.isEmpty()){
