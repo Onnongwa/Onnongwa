@@ -8,29 +8,12 @@ import {
 import { useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
-// (임시) 등록 API — 나중에 실제 백엔드 연동으로 교체
-async function registerExperience(payload: unknown): Promise<{success:boolean; message:string}> {
-    try {
-        // 실제 연동 시:
-        // const res = await fetch(`${process.env.REACT_APP_API_URL}/experiences`, {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify(payload),
-        // });
-        // if (!res.ok) return { success: false, message: await res.text() };
-        // return { success: true, message: "등록 완료!" };
-
-        console.log("mock registerExperience payload:", payload);
-        return { success: true, message: "(mock) 등록 완료!" };
-    } catch (e: any) {
-        return { success: false, message: e?.message ?? "알 수 없는 오류" };
-    }
-}
+const API_BASE = "http://localhost:8080/api/v1/experience"
 
 type ScheduleItem = { time: string; activity: string };
 type ExperienceData = {
     title: string;
-    aiPromotionalText: string;
+    description: string;
     location: string;
     address: string;
     placeType: string;
@@ -49,50 +32,6 @@ type ExperienceData = {
     hashtags: string[];
     host: { name: string; phone: string; email: string; farmName: string };
     imageUrl?: string;
-};
-
-const initialData: ExperienceData = {
-    title: "AI 추천: 숲속 힐링 명상 & 차담 체험 🧘‍♀️🍵",
-    aiPromotionalText: `바쁜 일상에 지친 당신을 위한 완벽한 휴식! 🌿
-고요한 숲속에서 자연의 소리를 들으며 깊은 명상에 잠기고,
-향긋한 전통차와 함께 마음을 나누는 차담 시간을 가져보세요.
-몸과 마음의 균형을 되찾고, 새로운 에너지를 충전할 수 있습니다.
-도심을 벗어나 진정한 나를 만나는 특별한 경험을 선사합니다.`,
-    location: "경기도 가평",
-    address: "가평군 상면 수목원로 123",
-    placeType: "실외",
-    regionType: "농촌",
-    crops: "차, 허브",
-    price: "45,000원",
-    duration: "약 2시간",
-    availableDates: "매주 주말 (사전 예약 필수)",
-    operatingHours: "10:00 - 17:00",
-    closedDays: ["월요일", "공휴일"],
-    minParticipants: 1,
-    maxParticipants: 10,
-    schedule: [
-        { time: "10:00", activity: "✅ 농장 도착 및 환영" },
-        { time: "10:30", activity: "🛠️ 명상 도구 설명 및 안전 교육" },
-        { time: "11:00", activity: "🧘‍♀️ 숲속 명상 체험" },
-        { time: "12:00", activity: "🍽️ 전통차 시음 및 다과" },
-        { time: "12:30", activity: "🗣️ 자유로운 차담 시간" },
-        { time: "13:00", activity: "👋 체험 마무리 및 기념품 증정" },
-    ],
-    highlights: [
-        "전문가와 함께하는 숲속 명상",
-        "다도 체험 및 전통차 시음",
-        "자연 속에서 얻는 깊은 평화와 안정",
-        "소규모 그룹으로 프라이빗한 경험",
-    ],
-    inclusions: ["명상 도구 대여", "전통차 및 다과", "전문가 가이드", "기념품"],
-    hashtags: ["#숲속명상", "#차담", "#힐링체험", "#자연치유", "#가평여행"],
-    host: {
-        name: "김철수",
-        phone: "010-1234-5678",
-        email: "kim.chulsoo@example.com",
-        farmName: "가평 힐링 숲 농장",
-    },
-    imageUrl: "/placeholder.svg?height=400&width=600",
 };
 
 export default function AiGenerateReviewPage() {
@@ -137,7 +76,7 @@ export default function AiGenerateReviewPage() {
 
         return {
             title: result.title,
-            aiPromotionalText: result.description || "",
+            description: result.description || "",
             location: result.region,
             address: result.address,
             placeType: placeTypeMap[result.placeType] || "실내",
@@ -167,7 +106,7 @@ export default function AiGenerateReviewPage() {
 
     // 편집 토글
     const [editPromo, setEditPromo] = useState(false);
-    const [promoText, setPromoText] = useState(data.aiPromotionalText);
+    const [promoText, setPromoText] = useState(data.description);
     const [editBasic, setEditBasic] = useState(false);
     const [editDetails, setEditDetails] = useState(false);
     const [editSchedule, setEditSchedule] = useState(false);
@@ -180,23 +119,20 @@ export default function AiGenerateReviewPage() {
         try {
             setIsSubmitting(true);
 
-            // payload 구성: data + aiPromotionalText 포함
-            const payload = { ...data, aiPromotionalText: promoText };
-
-            const response = await fetch("/api/v1/test", {
+            const response = await fetch(API_BASE, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(payload),
+                body: JSON.stringify(data),
             });
 
             if (!response.ok) throw new Error("등록 실패");
 
-            const result = await response.json();
-
-            // alert 출력
-            alert(`${result.success ? "✅" : "❌"} ${result.message}`);
+            // const result = await response.json();
+            //
+            // // alert 출력
+            // alert(`${result.success ? "✅" : "❌"} ${result.message}`);
         } catch (error) {
             console.error(error);
             alert("❌ 등록 실패. 다시 시도해주세요.");
