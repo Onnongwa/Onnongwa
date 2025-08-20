@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 public class ExperienceService {
 
 	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
-	private final String IMAGE_BASE_URL = "/images/";
+	private final String IMAGE_BASE_URL = "/uploads/";
 
 	private final OpenApiService openApiService;
 
@@ -41,6 +41,9 @@ public class ExperienceService {
 		Path path = Paths.get(UPLOAD_DIR + savedFileName);
 
 		Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+
+		System.out.println(IMAGE_BASE_URL + savedFileName);
+
 
 		return IMAGE_BASE_URL + savedFileName;
 	}
