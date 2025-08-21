@@ -5,30 +5,15 @@ import {
     Edit, CheckCircle, MapPin, Clock, Users, Calendar, Tag,
     Mail, Phone, Sparkles
 } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
-// (임시) 등록 API — 나중에 실제 백엔드 연동으로 교체
-async function registerExperience(payload: unknown): Promise<{success:boolean; message:string}> {
-    try {
-        // 실제 연동 시:
-        // const res = await fetch(`${process.env.REACT_APP_API_URL}/experiences`, {
-        //   method: "POST",
-        //   headers: { "Content-Type": "application/json" },
-        //   body: JSON.stringify(payload),
-        // });
-        // if (!res.ok) return { success: false, message: await res.text() };
-        // return { success: true, message: "등록 완료!" };
-
-        console.log("mock registerExperience payload:", payload);
-        return { success: true, message: "(mock) 등록 완료!" };
-    } catch (e: any) {
-        return { success: false, message: e?.message ?? "알 수 없는 오류" };
-    }
-}
+const API_BASE = "http://localhost:8080/api/v1/experience"
 
 type ScheduleItem = { time: string; activity: string };
 type ExperienceData = {
     title: string;
-    aiPromotionalText: string;
+    description: string;
     location: string;
     address: string;
     placeType: string;
@@ -49,57 +34,61 @@ type ExperienceData = {
     imageUrl?: string;
 };
 
-const initialData: ExperienceData = {
-    title: "AI 추천: 숲속 힐링 명상 & 차담 체험 🧘‍♀️🍵",
-    aiPromotionalText: `바쁜 일상에 지친 당신을 위한 완벽한 휴식! 🌿
-고요한 숲속에서 자연의 소리를 들으며 깊은 명상에 잠기고,
-향긋한 전통차와 함께 마음을 나누는 차담 시간을 가져보세요.
-몸과 마음의 균형을 되찾고, 새로운 에너지를 충전할 수 있습니다.
-도심을 벗어나 진정한 나를 만나는 특별한 경험을 선사합니다.`,
-    location: "경기도 가평",
-    address: "가평군 상면 수목원로 123",
-    placeType: "실외",
-    regionType: "농촌",
-    crops: "차, 허브",
-    price: "45,000원",
-    duration: "약 2시간",
-    availableDates: "매주 주말 (사전 예약 필수)",
-    operatingHours: "10:00 - 17:00",
-    closedDays: ["월요일", "공휴일"],
-    minParticipants: 1,
-    maxParticipants: 10,
-    schedule: [
-        { time: "10:00", activity: "✅ 농장 도착 및 환영" },
-        { time: "10:30", activity: "🛠️ 명상 도구 설명 및 안전 교육" },
-        { time: "11:00", activity: "🧘‍♀️ 숲속 명상 체험" },
-        { time: "12:00", activity: "🍽️ 전통차 시음 및 다과" },
-        { time: "12:30", activity: "🗣️ 자유로운 차담 시간" },
-        { time: "13:00", activity: "👋 체험 마무리 및 기념품 증정" },
-    ],
-    highlights: [
-        "전문가와 함께하는 숲속 명상",
-        "다도 체험 및 전통차 시음",
-        "자연 속에서 얻는 깊은 평화와 안정",
-        "소규모 그룹으로 프라이빗한 경험",
-    ],
-    inclusions: ["명상 도구 대여", "전통차 및 다과", "전문가 가이드", "기념품"],
-    hashtags: ["#숲속명상", "#차담", "#힐링체험", "#자연치유", "#가평여행"],
-    host: {
-        name: "김철수",
-        phone: "010-1234-5678",
-        email: "kim.chulsoo@example.com",
-        farmName: "가평 힐링 숲 농장",
-    },
-    imageUrl: "/placeholder.svg?height=400&width=600",
-};
-
 export default function AiGenerateReviewPage() {
-    const [data] = useState<ExperienceData>(initialData);
+
+    const location = useLocation();
+    const { result } = location.state || {}; // 안전하게 구조 분해
+
+    useEffect(() => {
+        console.log("이전 페이지에서 받은 데이터:", result);
+    }, [result]);
+
+    const [data, setData] = useState<ExperienceData>(() => {
+        if (!result) return {} as ExperienceData;
+
+        // placeType, regionType 한국어 변환
+        const placeTypeMap: Record<string, string> = { indoor: "실내", outdoor: "실외" };
+        const regionTypeMap: Record<string, string> = { rural: "농촌", fishing: "어촌" };
+
+        // scheduleItems 변환
+        const schedule = (result.scheduleItems || []).map((s: string) => {
+            const [time, ...rest] = s.split("-");
+            return { time: time.trim(), activity: rest.join("-").trim() };
+        });
+
+        return {
+            title: result.title,
+            description: result.description || "",
+            location: result.region,
+            address: result.address,
+            placeType: placeTypeMap[result.placeType] || "실내",
+            regionType: regionTypeMap[result.regionType] || "농촌",
+            crops: result.crops,
+            price: String(result.price),
+            duration: "약 " + result.duration + "시간", // 운영 시간은 추후 입력
+            availableDates: result.selectedClosedDays ,
+            operatingHours: `${result.startTime || ""} - ${result.endTime || ""}`,
+            closedDays: result.selectedClosedDays ,
+            minParticipants: result.minParticipants,
+            maxParticipants: result.maxParticipants,
+            schedule,
+            highlights: result.highlights,
+            inclusions: result.inclusions,
+            hashtags: result.hashtags,
+            host: {
+                name: result.hostName,
+                phone: result.hostPhone,
+                email: result.hostEmail,
+                farmName: result.farmName
+            },
+            imageUrl: result.imageUrl
+        };
+    });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // 편집 토글
     const [editPromo, setEditPromo] = useState(false);
-    const [promoText, setPromoText] = useState(data.aiPromotionalText);
+    const [promoText, setPromoText] = useState(data.description);
     const [editBasic, setEditBasic] = useState(false);
     const [editDetails, setEditDetails] = useState(false);
     const [editSchedule, setEditSchedule] = useState(false);
@@ -109,11 +98,29 @@ export default function AiGenerateReviewPage() {
     const [editHost, setEditHost] = useState(false);
 
     const handleSubmit = async () => {
-        setIsSubmitting(true);
-        const payload = { ...data, aiPromotionalText: promoText };
-        const result = await registerExperience(payload);
-        alert(`${result.success ? "✅" : "❌"} ${result.message}`);
-        setIsSubmitting(false);
+        try {
+            setIsSubmitting(true);
+
+            const response = await fetch(API_BASE, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            if (!response.ok) throw new Error("등록 실패");
+
+            // const result = await response.json();
+            //
+            // // alert 출력
+            // alert(`${result.success ? "✅" : "❌"} ${result.message}`);
+        } catch (error) {
+            console.error(error);
+            alert("❌ 등록 실패. 다시 시도해주세요.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -131,14 +138,14 @@ export default function AiGenerateReviewPage() {
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <Sparkles className="h-6 w-6 text-primary" />
+                                <Sparkles className="h-6 w-6 text-primary"/>
                                 AI가 작성한 홍보글
                             </h3>
                             <button
                                 className="px-3 py-1.5 rounded border text-sm"
                                 onClick={() => setEditPromo(!editPromo)}
                             >
-                                <Edit className="h-4 w-4 inline mr-1" />
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editPromo ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
@@ -155,34 +162,66 @@ export default function AiGenerateReviewPage() {
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <MapPin className="h-6 w-6 text-primary" />
+                                <MapPin className="h-6 w-6 text-primary"/>
                                 기본 정보
                             </h3>
-                            <button className="px-3 py-1.5 rounded border text-sm" onClick={() => setEditBasic(!editBasic)}>
-                                <Edit className="h-4 w-4 inline mr-1" />
+                            <button className="px-3 py-1.5 rounded border text-sm"
+                                    onClick={() => setEditBasic(!editBasic)}>
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editBasic ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
                         {editBasic ? (
                             <div className="grid grid-cols-2 gap-3 text-sm">
-                                <input className="border rounded px-2 py-1" placeholder="위치" defaultValue={data.location} />
-                                <input className="border rounded px-2 py-1" placeholder="기간" defaultValue={data.duration} />
-                                <input className="border rounded px-2 py-1" placeholder="가격" defaultValue={data.price} />
-                                <input className="border rounded px-2 py-1" placeholder="이용 가능 날짜" defaultValue={data.availableDates} />
+                                <input
+                                    className="border rounded px-2 py-1"
+                                    placeholder="위치"
+                                    value={data.location}
+                                    onChange={(e) => setData({...data, location: e.target.value})}
+                                />
+                                <input
+                                    className="border rounded px-2 py-1"
+                                    placeholder="기간"
+                                    value={data.duration}
+                                    onChange={(e) => setData({...data, duration: e.target.value})}
+                                />
+                                <input
+                                    className="border rounded px-2 py-1"
+                                    placeholder="가격"
+                                    value={data.price}
+                                    onChange={(e) => setData({...data, price: e.target.value})}
+                                />
+                                <input
+                                    className="border rounded px-2 py-1"
+                                    placeholder="이용 가능 날짜"
+                                    value={data.availableDates}
+                                    onChange={(e) => setData({...data, availableDates: e.target.value})}
+                                />
                             </div>
                         ) : (
                             <div className="grid grid-cols-2 gap-4 text-sm">
-                                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
-                                    <MapPin className="h-6 w-6 mb-2" /><span className="font-medium">{data.location}</span>
+                                <div
+                                    className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
+                                    <MapPin className="h-6 w-6 mb-2"/><span
+                                    className="font-medium">{data.location}</span>
                                 </div>
-                                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
-                                    <Clock className="h-6 w-6 mb-2" /><span className="font-medium">{data.duration}</span>
+                                <div
+                                    className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
+                                    <Clock className="h-6 w-6 mb-2"/><span
+                                    className="font-medium">{data.duration}</span>
                                 </div>
-                                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
-                                    <Users className="h-6 w-6 mb-2" /><span className="font-medium">{data.price}</span>
+                                <div
+                                    className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
+                                    <Users className="h-6 w-6 mb-2"/><span className="font-medium">{data.price}</span>
                                 </div>
-                                <div className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
-                                    <Calendar className="h-6 w-6 mb-2" /><span className="font-medium">{data.availableDates}</span>
+                                <div
+                                    className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
+                                    <Calendar className="h-6 w-6 mb-2"/>
+                                    <span className="font-medium">
+        {Array.isArray(data.availableDates)
+            ? data.availableDates.join(", ")  // 배열이면 ,로 연결
+            : data.availableDates.split(/[,]/).join(", ")} {/* 문자열이면 , 기준으로 split */}
+    </span>
                                 </div>
                             </div>
                         )}
@@ -192,23 +231,95 @@ export default function AiGenerateReviewPage() {
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <CheckCircle className="h-6 w-6 text-primary" />
+                                <CheckCircle className="h-6 w-6 text-primary"/>
                                 체험 상세 정보
                             </h3>
-                            <button className="px-3 py-1.5 rounded border text-sm" onClick={() => setEditDetails(!editDetails)}>
-                                <Edit className="h-4 w-4 inline mr-1" />
+                            <button className="px-3 py-1.5 rounded border text-sm"
+                                    onClick={() => setEditDetails(!editDetails)}>
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editDetails ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
                         {editDetails ? (
                             <ul className="space-y-2 text-base">
-                                <li><span className="font-medium">주소:</span> <input className="border rounded px-2 py-1 w-full" defaultValue={data.address} /></li>
-                                <li><span className="font-medium">장소 유형:</span> <input className="border rounded px-2 py-1" defaultValue={data.placeType} /></li>
-                                <li><span className="font-medium">지역 유형:</span> <input className="border rounded px-2 py-1" defaultValue={data.regionType} /></li>
-                                <li><span className="font-medium">관련 작물:</span> <input className="border rounded px-2 py-1" defaultValue={data.crops} /></li>
-                                <li><span className="font-medium">운영 시간:</span> <input className="border rounded px-2 py-1" defaultValue={data.operatingHours} /></li>
-                                <li><span className="font-medium">휴무일:</span> <input className="border rounded px-2 py-1 w-full" defaultValue={data.closedDays.join(", ")} /></li>
-                                <li><span className="font-medium">참가 인원:</span> 최소 <input type="number" defaultValue={data.minParticipants} className="border rounded px-2 py-1 w-20 inline-block" /> 명 ~ 최대 <input type="number" defaultValue={data.maxParticipants} className="border rounded px-2 py-1 w-20 inline-block" /> 명</li>
+                                <li>
+                                    <span className="font-medium">주소:</span>
+                                    <input
+                                        className="border rounded px-2 py-1 w-full"
+                                        value={data.address}
+                                        onChange={(e) => setData({...data, address: e.target.value})}
+                                    />
+                                </li>
+                                <li>
+                                    <span className="font-medium">장소 유형:</span>
+                                    <input
+                                        className="border rounded px-2 py-1"
+                                        value={data.placeType}
+                                        onChange={(e) => setData({...data, placeType: e.target.value})}
+                                    />
+                                </li>
+                                <li>
+                                    <span className="font-medium">지역 유형:</span>
+                                    <input
+                                        className="border rounded px-2 py-1"
+                                        value={data.regionType}
+                                        onChange={(e) => setData({...data, regionType: e.target.value})}
+                                    />
+                                </li>
+                                <li>
+                                    <span className="font-medium">관련 작물:</span>
+                                    <input
+                                        className="border rounded px-2 py-1"
+                                        value={data.crops}
+                                        onChange={(e) => setData({...data, crops: e.target.value})}
+                                    />
+                                </li>
+                                <li>
+                                    <span className="font-medium">운영 시간:</span>
+                                    <input
+                                        className="border rounded px-2 py-1"
+                                        value={data.operatingHours}
+                                        onChange={(e) => setData({...data, operatingHours: e.target.value})}
+                                    />
+                                </li>
+                                <li>
+                                    <span className="font-medium">휴무일:</span>
+                                    <input
+                                        className="border rounded px-2 py-1 w-full"
+                                        value={data.closedDays.join(", ")} // 보기용 문자열
+                                        onChange={(e) => {
+                                            // 입력값을 쉼표 또는 줄바꿈 기준으로 나누고
+                                            // 공백 제거, 빈 문자열 제거
+                                            const cleaned = e.target.value
+                                                .split(/,|\n/)        // 쉼표나 줄바꿈 기준으로 분리
+                                                .map(s => s.trim())    // 공백 제거
+                                                .filter(s => s.length > 0); // 빈 문자열 제거
+                                            setData({...data, closedDays: cleaned});
+                                        }}
+                                    />
+                                </li>
+                                <li>
+                                    <span className="font-medium">참가 인원:</span>
+                                    최소{" "}
+                                    <input
+                                        type="number"
+                                        className="border rounded px-2 py-1 w-20 inline-block"
+                                        value={data.minParticipants}
+                                        onChange={(e) =>
+                                            setData({...data, minParticipants: parseInt(e.target.value) || 1})
+                                        }
+                                    />{" "}
+                                    명 ~ 최대{" "}
+                                    <input
+                                        type="number"
+                                        className="border rounded px-2 py-1 w-20 inline-block"
+                                        value={data.maxParticipants}
+                                        onChange={(e) =>
+                                            setData({...data, maxParticipants: parseInt(e.target.value) || 1})
+                                        }
+                                    />{" "}
+                                    명
+                                </li>
                             </ul>
                         ) : (
                             <ul className="space-y-2 text-base">
@@ -218,7 +329,9 @@ export default function AiGenerateReviewPage() {
                                 <li><span className="font-medium">관련 작물:</span> {data.crops}</li>
                                 <li><span className="font-medium">운영 시간:</span> {data.operatingHours}</li>
                                 <li><span className="font-medium">휴무일:</span> {data.closedDays.join(", ")}</li>
-                                <li><span className="font-medium">참가 인원:</span> 최소 {data.minParticipants}명 ~ 최대 {data.maxParticipants}명</li>
+                                <li><span className="font-medium">참가 인원:</span> 최소 {data.minParticipants}명 ~
+                                    최대 {data.maxParticipants}명
+                                </li>
                             </ul>
                         )}
                     </section>
@@ -227,24 +340,51 @@ export default function AiGenerateReviewPage() {
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <Calendar className="h-6 w-6 text-primary" />
+                                <Calendar className="h-6 w-6 text-primary"/>
                                 체험 일정
                             </h3>
-                            <button className="px-3 py-1.5 rounded border text-sm" onClick={() => setEditSchedule(!editSchedule)}>
-                                <Edit className="h-4 w-4 inline mr-1" />
+                            <button className="px-3 py-1.5 rounded border text-sm"
+                                    onClick={() => setEditSchedule(!editSchedule)}>
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editSchedule ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
                         {editSchedule ? (
-                            <>
-                <textarea
-                    defaultValue={data.schedule.map(s => `${s.time}: ${s.activity}`).join("\n")}
-                    rows={data.schedule.length + 2}
-                    className="w-full p-3 rounded border"
-                    placeholder="각 줄에 '시간: 일정' 형식으로 입력"
-                />
-                                <p className="text-sm text-gray-500 mt-1">각 줄에 '시간: 일정' 형식으로 입력하세요.</p>
-                            </>
+                            <div className="space-y-2">
+                                {data.schedule.map((s, i) => (
+                                    <div key={i} className="flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="border rounded px-2 py-1 w-24"
+                                            value={s.time}
+                                            onChange={(e) => {
+                                                const newSchedule = [...data.schedule];
+                                                newSchedule[i].time = e.target.value;
+                                                setData({...data, schedule: newSchedule});
+                                            }}
+                                        />
+                                        <input
+                                            type="text"
+                                            className="border rounded px-2 py-1 flex-1"
+                                            value={s.activity}
+                                            onChange={(e) => {
+                                                const newSchedule = [...data.schedule];
+                                                newSchedule[i].activity = e.target.value;
+                                                setData({...data, schedule: newSchedule});
+                                            }}
+                                        />
+                                    </div>
+                                ))}
+                                <button
+                                    className="mt-2 px-3 py-1 rounded border text-sm"
+                                    onClick={() => setData({
+                                        ...data,
+                                        schedule: [...data.schedule, {time: "", activity: ""}]
+                                    })}
+                                >
+                                    + 일정 추가
+                                </button>
+                            </div>
                         ) : (
                             <div className="space-y-3">
                                 {data.schedule.map((s, i) => (
@@ -255,31 +395,62 @@ export default function AiGenerateReviewPage() {
                                 ))}
                             </div>
                         )}
+
                     </section>
 
-                    {/* 하이라이트 */}
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <Tag className="h-6 w-6 text-primary" />
+                                <Tag className="h-6 w-6 text-primary"/>
                                 체험 하이라이트
                             </h3>
-                            <button className="px-3 py-1.5 rounded border text-sm" onClick={() => setEditHighlights(!editHighlights)}>
-                                <Edit className="h-4 w-4 inline mr-1" />
+                            <button
+                                className="px-3 py-1.5 rounded border text-sm"
+                                onClick={() => setEditHighlights(!editHighlights)}
+                            >
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editHighlights ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
                         {editHighlights ? (
-                            <textarea
-                                defaultValue={data.highlights.join("\n")}
-                                rows={data.highlights.length + 2}
-                                className="w-full p-3 rounded border"
-                            />
+                            <div className="space-y-2">
+                                {data.highlights.map((h, i) => (
+                                    <div key={i} className="flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="border rounded px-2 py-1 flex-1"
+                                            value={h}
+                                            onChange={(e) => {
+                                                const newHighlights = [...data.highlights];
+                                                newHighlights[i] = e.target.value;
+                                                setData({...data, highlights: newHighlights});
+                                            }}
+                                        />
+                                        <button
+                                            className="px-2 py-1 bg-red-500 text-white rounded"
+                                            onClick={() => {
+                                                const newHighlights = data.highlights.filter((_, index) => index !== i);
+                                                setData({...data, highlights: newHighlights});
+                                            }}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    className="mt-2 px-3 py-1 rounded border text-sm"
+                                    onClick={() =>
+                                        setData({...data, highlights: [...data.highlights, ""]})
+                                    }
+                                >
+                                    + 하이라이트 추가
+                                </button>
+                            </div>
                         ) : (
                             <ul className="space-y-2">
                                 {data.highlights.map((h, i) => (
                                     <li key={i} className="flex items-center gap-2">
-                                        <CheckCircle className="h-5 w-5 text-primary" />
+                                        <CheckCircle className="h-5 w-5 text-primary"/>
                                         <span>{h}</span>
                                     </li>
                                 ))}
@@ -291,26 +462,58 @@ export default function AiGenerateReviewPage() {
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <Tag className="h-6 w-6 text-primary" />
+                                <Tag className="h-6 w-6 text-primary"/>
                                 포함 사항
                             </h3>
-                            <button className="px-3 py-1.5 rounded border text-sm" onClick={() => setEditInclusions(!editInclusions)}>
-                                <Edit className="h-4 w-4 inline mr-1" />
+                            <button
+                                className="px-3 py-1.5 rounded border text-sm"
+                                onClick={() => setEditInclusions(!editInclusions)}
+                            >
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editInclusions ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
+
                         {editInclusions ? (
-                            <textarea
-                                defaultValue={data.inclusions.join(", ")}
-                                className="w-full p-3 rounded border"
-                                placeholder="쉼표로 구분하여 입력"
-                            />
+                            <div className="space-y-2">
+                                {data.inclusions.map((inc, i) => (
+                                    <div key={i} className="flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="border rounded px-2 py-1 flex-1"
+                                            value={inc}
+                                            onChange={(e) => {
+                                                const newInclusions = [...data.inclusions];
+                                                newInclusions[i] = e.target.value;
+                                                setData({ ...data, inclusions: newInclusions });
+                                            }}
+                                        />
+                                        <button
+                                            className="px-2 py-1 bg-red-500 text-white rounded"
+                                            onClick={() => {
+                                                const newInclusions = data.inclusions.filter((_, index) => index !== i);
+                                                setData({ ...data, inclusions: newInclusions });
+                                            }}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    className="mt-2 px-3 py-1 rounded border text-sm"
+                                    onClick={() =>
+                                        setData({ ...data, inclusions: [...data.inclusions, ""] })
+                                    }
+                                >
+                                    + 포함 사항 추가
+                                </button>
+                            </div>
                         ) : (
                             <div className="flex flex-wrap gap-2">
                                 {data.inclusions.map((inc, i) => (
                                     <span key={i} className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
-                    {inc}
-                  </span>
+          {inc}
+        </span>
                                 ))}
                             </div>
                         )}
@@ -320,26 +523,58 @@ export default function AiGenerateReviewPage() {
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <Tag className="h-6 w-6 text-primary" />
+                                <Tag className="h-6 w-6 text-primary"/>
                                 해시태그
                             </h3>
-                            <button className="px-3 py-1.5 rounded border text-sm" onClick={() => setEditHashtags(!editHashtags)}>
-                                <Edit className="h-4 w-4 inline mr-1" />
+                            <button
+                                className="px-3 py-1.5 rounded border text-sm"
+                                onClick={() => setEditHashtags(!editHashtags)}
+                            >
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editHashtags ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
+
                         {editHashtags ? (
-                            <textarea
-                                defaultValue={data.hashtags.join(", ")}
-                                className="w-full p-3 rounded border"
-                                placeholder="쉼표로 구분하여 입력"
-                            />
+                            <div className="space-y-2">
+                                {data.hashtags.map((tag, i) => (
+                                    <div key={i} className="flex gap-2 items-center">
+                                        <input
+                                            type="text"
+                                            className="border rounded px-2 py-1 flex-1"
+                                            value={tag}
+                                            onChange={(e) => {
+                                                const newTags = [...data.hashtags];
+                                                newTags[i] = e.target.value;
+                                                setData({ ...data, hashtags: newTags });
+                                            }}
+                                        />
+                                        <button
+                                            className="px-2 py-1 bg-red-500 text-white rounded"
+                                            onClick={() => {
+                                                const newTags = data.hashtags.filter((_, index) => index !== i);
+                                                setData({ ...data, hashtags: newTags });
+                                            }}
+                                        >
+                                            삭제
+                                        </button>
+                                    </div>
+                                ))}
+                                <button
+                                    className="mt-2 px-3 py-1 rounded border text-sm"
+                                    onClick={() =>
+                                        setData({ ...data, hashtags: [...data.hashtags, ""] })
+                                    }
+                                >
+                                    + 해시태그 추가
+                                </button>
+                            </div>
                         ) : (
                             <div className="flex flex-wrap gap-2">
                                 {data.hashtags.map((t, i) => (
                                     <span key={i} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm">
-                    {t}
-                  </span>
+          {t}
+        </span>
                                 ))}
                             </div>
                         )}
@@ -349,31 +584,66 @@ export default function AiGenerateReviewPage() {
                     <section>
                         <div className="flex items-center justify-between mb-3">
                             <h3 className="text-xl font-semibold flex items-center gap-2">
-                                <Users className="h-6 w-6 text-primary" />
+                                <Users className="h-6 w-6 text-primary"/>
                                 담당자 정보
                             </h3>
-                            <button className="px-3 py-1.5 rounded border text-sm" onClick={() => setEditHost(!editHost)}>
-                                <Edit className="h-4 w-4 inline mr-1" />
+                            <button
+                                className="px-3 py-1.5 rounded border text-sm"
+                                onClick={() => setEditHost(!editHost)}
+                            >
+                                <Edit className="h-4 w-4 inline mr-1"/>
                                 {editHost ? "수정 완료" : "수정하기"}
                             </button>
                         </div>
+
                         {editHost ? (
                             <div className="space-y-2">
-                                <input className="border rounded px-2 py-1 w-full" placeholder="이름" defaultValue={data.host.name} />
-                                <input className="border rounded px-2 py-1 w-full" placeholder="전화번호" defaultValue={data.host.phone} />
-                                <input className="border rounded px-2 py-1 w-full" placeholder="이메일" defaultValue={data.host.email} />
-                                <input className="border rounded px-2 py-1 w-full" placeholder="농장명" defaultValue={data.host.farmName} />
+                                <input
+                                    className="border rounded px-2 py-1 w-full"
+                                    placeholder="이름"
+                                    value={data.host.name}
+                                    onChange={(e) =>
+                                        setData({ ...data, host: { ...data.host, name: e.target.value } })
+                                    }
+                                />
+                                <input
+                                    className="border rounded px-2 py-1 w-full"
+                                    placeholder="전화번호"
+                                    value={data.host.phone}
+                                    onChange={(e) =>
+                                        setData({ ...data, host: { ...data.host, phone: e.target.value } })
+                                    }
+                                />
+                                <input
+                                    className="border rounded px-2 py-1 w-full"
+                                    placeholder="이메일"
+                                    value={data.host.email}
+                                    onChange={(e) =>
+                                        setData({ ...data, host: { ...data.host, email: e.target.value } })
+                                    }
+                                />
+                                <input
+                                    className="border rounded px-2 py-1 w-full"
+                                    placeholder="농장명"
+                                    value={data.host.farmName}
+                                    onChange={(e) =>
+                                        setData({ ...data, host: { ...data.host, farmName: e.target.value } })
+                                    }
+                                />
                             </div>
                         ) : (
                             <p>
                                 <span className="font-medium">{data.host.name}</span> ({data.host.farmName})
-                                <br />
-                                <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4" />문의: {data.host.phone}</span>
-                                <br />
+                                <br/>
                                 <span className="inline-flex items-center gap-1">
-                  <Mail className="h-4 w-4" />
-                  <a href={`mailto:${data.host.email}`} className="hover:underline">{data.host.email}</a>
-                </span>
+        <Phone className="h-4 w-4"/>
+        문의: {data.host.phone}
+      </span>
+                                <br/>
+                                <span className="inline-flex items-center gap-1">
+        <Mail className="h-4 w-4"/>
+        <a href={`mailto:${data.host.email}`} className="hover:underline">{data.host.email}</a>
+      </span>
                             </p>
                         )}
                     </section>

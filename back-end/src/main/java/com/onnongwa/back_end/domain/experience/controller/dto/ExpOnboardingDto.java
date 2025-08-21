@@ -2,7 +2,7 @@ package com.onnongwa.back_end.domain.experience.controller.dto;
 
 import java.util.List;
 
-public record ExpRegisterDTO(
+public record ExpOnboardingDto(
 	String title,
 	String region,
 	String address,

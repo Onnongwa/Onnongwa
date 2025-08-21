@@ -179,13 +179,11 @@ export default function GenerateOnboardingPage() {
             const result = await response.json();
             console.log("서버 응답:", result);
 
-            // navigate("/register/ai-generate/review");
+            navigate("/register/ai-generate",  { state: { result } });
         } catch (error) {
             console.error("요청 실패:", error);
             alert("서버와 통신 중 오류가 발생했습니다.");
         }
-
-        // navigate("/register/ai-generate/review");
     };
 
     const Step = () => {
