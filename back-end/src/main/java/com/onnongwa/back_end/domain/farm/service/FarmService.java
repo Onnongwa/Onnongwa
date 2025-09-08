@@ -46,11 +46,16 @@ public class FarmService {
 
 	public FarmResponseDto updateFarm(Long id, FarmUpdateDto dto) {
 
+
 		Farm farm = farmRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Farm not found: " + id));
-
 		farm.update(dto);
 
 		return FarmResponseDto.from(farm);
+	}
+
+	public void deleteFarm(Long id) {
+
+		farmRepository.deleteById(id);
 	}
 }
