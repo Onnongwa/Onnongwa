@@ -3,6 +3,7 @@ package com.onnongwa.back_end.domain.farm.service;
 import org.springframework.stereotype.Service;
 
 import com.onnongwa.back_end.domain.farm.controller.dto.FarmRegisterDto;
+import com.onnongwa.back_end.domain.farm.controller.dto.FarmResponseDto;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import com.onnongwa.back_end.domain.farm.repository.FarmRepository;
 import com.onnongwa.back_end.domain.user.entity.User;
@@ -29,5 +30,13 @@ public class FarmService {
 			.businessNumber(dto.businessNumber())
 			.user(user)
 			.build());
+	}
+
+	public FarmResponseDto getFarmById(Long id) {
+
+		Farm farm = farmRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("Farm not found: " + id));
+
+		return FarmResponseDto.from(farm);
 	}
 }
