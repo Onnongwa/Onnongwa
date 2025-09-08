@@ -61,19 +61,25 @@ public class Experience {
     @Column(name = "hashtag")
     private List<String> hashtags = new ArrayList<>();
 
+    // 일정
+    @OneToMany(mappedBy = "experience", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ExperienceSchedule> schedule = new ArrayList<>();
+
     // 담당자 정보 (Host)
     private String hostName;
     private String hostPhone;
     private String hostEmail;
     private String hostFarmName;
 
-    // 관계
-
-    // 일정
-    @OneToMany(mappedBy = "experience", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ExperienceSchedule> schedule = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farm_id", nullable = false)
     private Farm farm;
+
+
+    public void addSchedule(ExperienceSchedule schedule) {
+        this.schedule.add(schedule);
+        schedule.setExperience(this);
+    }
+
 }

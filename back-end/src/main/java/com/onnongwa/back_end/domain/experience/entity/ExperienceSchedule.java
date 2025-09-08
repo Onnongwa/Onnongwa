@@ -8,6 +8,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,14 @@ public class ExperienceSchedule {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "experience_id")
 	private Experience experience;
+
+	public ExperienceSchedule(String time, String activity, Experience experience) {
+		this.time = time;
+		this.activity = activity;
+		this.experience = experience;
+	}
+
+	public void setExperience(Experience experience) {
+		this.experience = experience;
+	}
 }
