@@ -111,10 +111,6 @@ export default function AiGenerateReviewPage() {
 
             if (!response.ok) throw new Error("등록 실패");
 
-            // const result = await response.json();
-            //
-            // // alert 출력
-            // alert(`${result.success ? "✅" : "❌"} ${result.message}`);
         } catch (error) {
             console.error(error);
             alert("❌ 등록 실패. 다시 시도해주세요.");
@@ -218,10 +214,10 @@ export default function AiGenerateReviewPage() {
                                     className="flex flex-col items-center justify-center p-4 rounded-lg bg-gray-50 text-gray-700">
                                     <Calendar className="h-6 w-6 mb-2"/>
                                     <span className="font-medium">
-        {Array.isArray(data.availableDates)
-            ? data.availableDates.join(", ")  // 배열이면 ,로 연결
-            : data.availableDates.split(/[,]/).join(", ")} {/* 문자열이면 , 기준으로 split */}
-    </span>
+                                            {Array.isArray(data.availableDates)
+                                            ? data.availableDates.join(", ")  // 배열이면 ,로 연결
+                                            : data.availableDates.split(/[,]/).join(", ")} {/* 문자열이면 , 기준으로 split */}
+                                    </span>
                                 </div>
                             </div>
                         )}
@@ -511,9 +507,7 @@ export default function AiGenerateReviewPage() {
                         ) : (
                             <div className="flex flex-wrap gap-2">
                                 {data.inclusions.map((inc, i) => (
-                                    <span key={i} className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
-          {inc}
-        </span>
+                                    <span key={i} className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">{inc}</span>
                                 ))}
                             </div>
                         )}
@@ -572,9 +566,7 @@ export default function AiGenerateReviewPage() {
                         ) : (
                             <div className="flex flex-wrap gap-2">
                                 {data.hashtags.map((t, i) => (
-                                    <span key={i} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm">
-          {t}
-        </span>
+                                    <span key={i} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm">{t}</span>
                                 ))}
                             </div>
                         )}
@@ -635,15 +627,11 @@ export default function AiGenerateReviewPage() {
                             <p>
                                 <span className="font-medium">{data.host.name}</span> ({data.host.farmName})
                                 <br/>
-                                <span className="inline-flex items-center gap-1">
-        <Phone className="h-4 w-4"/>
-        문의: {data.host.phone}
-      </span>
+                                <span className="inline-flex items-center gap-1"><Phone className="h-4 w-4"/>문의: {data.host.phone}</span>
                                 <br/>
-                                <span className="inline-flex items-center gap-1">
-        <Mail className="h-4 w-4"/>
-        <a href={`mailto:${data.host.email}`} className="hover:underline">{data.host.email}</a>
-      </span>
+                                <span className="inline-flex items-center gap-1"><Mail className="h-4 w-4"/>
+                                <a href={`mailto:${data.host.email}`} className="hover:underline">{data.host.email}</a>
+                                </span>
                             </p>
                         )}
                     </section>
