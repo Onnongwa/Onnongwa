@@ -1,6 +1,7 @@
 package com.onnongwa.back_end.domain.farm.entity;
 
 import com.onnongwa.back_end.domain.experience.entity.Experience;
+import com.onnongwa.back_end.domain.farm.controller.dto.FarmUpdateDto;
 import com.onnongwa.back_end.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -33,4 +34,10 @@ public class Farm {
     @OneToMany(mappedBy = "farm")
     private List<Experience> experiences;
 
+    public void update(FarmUpdateDto dto) {
+        this.name = dto.name();
+        this.description = dto.description();
+        this.address = dto.address();
+        this.businessNumber = dto.businessNumber();
+    }
 }

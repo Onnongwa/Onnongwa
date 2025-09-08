@@ -1,9 +1,11 @@
 package com.onnongwa.back_end.domain.farm.service;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.onnongwa.back_end.domain.farm.controller.dto.FarmRegisterDto;
 import com.onnongwa.back_end.domain.farm.controller.dto.FarmResponseDto;
+import com.onnongwa.back_end.domain.farm.controller.dto.FarmUpdateDto;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import com.onnongwa.back_end.domain.farm.repository.FarmRepository;
 import com.onnongwa.back_end.domain.user.entity.User;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class FarmService {
 
 	private final FarmRepository farmRepository;
@@ -32,10 +35,21 @@ public class FarmService {
 			.build());
 	}
 
+	@Transactional(readOnly = true)
 	public FarmResponseDto getFarmById(Long id) {
 
 		Farm farm = farmRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("Farm not found: " + id));
+
+		return FarmResponseDto.from(farm);
+	}
+
+	public FarmResponseDto updateFarm(Long id, FarmUpdateDto dto) {
+
+		Farm farm = farmRepository.findById(id)
+			.orElseThrow(() -> new IllegalArgumentException("Farm not found: " + id));
+
+		farm.update(dto);
 
 		return FarmResponseDto.from(farm);
 	}
