@@ -31,7 +31,6 @@ public class ExperienceController {
 	@PostMapping
 	public ResponseEntity<?> registerExperience(@RequestBody ExpRegisterDto dto){
 
-		System.out.println("전달 테스트 : \n" + dto.toString());
 		experienceService.registerExperience(dto);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
