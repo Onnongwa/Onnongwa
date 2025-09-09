@@ -7,7 +7,7 @@ public record ExpRegisterDto(
 	String title,
 	String location,
 	String duration,
-	String price,
+	Integer price,
 	List<String> availableDates,
 	String description,
 	String imageUrl,
@@ -23,7 +23,7 @@ public record ExpRegisterDto(
 	int maxParticipants,
 
 	// 일정
-	List<ScheduleItem> schedule,
+	List<ScheduleDto> schedule,
 
 	// 하이라이트
 	List<String> highlights,
@@ -38,7 +38,8 @@ public record ExpRegisterDto(
 	HostInfo host
 
 ) {
-	public record ScheduleItem(
+
+	public record ScheduleDto(
 		String time,
 		String activity
 	) {}

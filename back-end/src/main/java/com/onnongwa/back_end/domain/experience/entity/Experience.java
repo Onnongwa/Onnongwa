@@ -3,6 +3,7 @@ package com.onnongwa.back_end.domain.experience.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import jakarta.persistence.*;
 import lombok.*;
@@ -61,19 +62,61 @@ public class Experience {
     @Column(name = "hashtag")
     private List<String> hashtags = new ArrayList<>();
 
+    // 일정
+    @OneToMany(mappedBy = "experience", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ExperienceSchedule> schedule = new ArrayList<>();
+
     // 담당자 정보 (Host)
     private String hostName;
     private String hostPhone;
     private String hostEmail;
     private String hostFarmName;
 
-    // 관계
-
-    // 일정
-    @OneToMany(mappedBy = "experience", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ExperienceSchedule> schedule = new ArrayList<>();
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farm_id", nullable = false)
     private Farm farm;
+
+
+    public static Experience from(ExpRegisterDto dto, Farm farm){
+        Experience experience = Experience.builder()
+            .title(dto.title())
+            .description(dto.description())
+            .location(dto.location())
+            .duration(dto.duration())
+            .price(dto.price())
+            .address(dto.address())
+            .placeType(dto.placeType())
+            .regionType(dto.regionType())
+            .crops(dto.crops())
+            .operatingHours(dto.operatingHours())
+            .minParticipants(dto.minParticipants())
+            .maxParticipants(dto.maxParticipants())
+            .imageUrl(dto.imageUrl())
+            .closedDays(dto.closedDays())
+            .highlights(dto.highlights())
+            .inclusions(dto.inclusions())
+            .hashtags(dto.hashtags())
+            .hostName(dto.host().name())
+            .hostPhone(dto.host().phone())
+            .hostEmail(dto.host().email())
+            .hostFarmName(dto.host().farmName())
+            .farm(farm)
+            .build();
+
+        // 스케줄 추가
+        dto.schedule().forEach(s -> {
+            ExperienceSchedule schedule = new ExperienceSchedule(s.time(), s.activity());
+            experience.addSchedule(schedule);
+        });
+
+        return experience;
+    }
+
+
+    public void addSchedule(ExperienceSchedule schedule) {
+        this.schedule.add(schedule);
+        schedule.setExperience(this);
+    }
+
 }

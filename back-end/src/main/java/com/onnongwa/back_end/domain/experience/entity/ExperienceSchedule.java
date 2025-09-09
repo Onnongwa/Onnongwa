@@ -25,4 +25,13 @@ public class ExperienceSchedule {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "experience_id")
 	private Experience experience;
+
+	public ExperienceSchedule(String time, String activity) {
+		this.time = time;
+		this.activity = activity;
+	}
+
+	void setExperience(Experience experience) {
+		this.experience = experience;
+	}
 }
