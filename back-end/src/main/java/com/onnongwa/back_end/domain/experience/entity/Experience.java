@@ -3,6 +3,7 @@ package com.onnongwa.back_end.domain.experience.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import jakarta.persistence.*;
 import lombok.*;
@@ -75,6 +76,42 @@ public class Experience {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "farm_id", nullable = false)
     private Farm farm;
+
+
+    public static Experience from(ExpRegisterDto dto, Farm farm){
+        Experience experience = Experience.builder()
+            .title(dto.title())
+            .description(dto.description())
+            .location(dto.location())
+            .duration(dto.duration())
+            .price(dto.price())
+            .address(dto.address())
+            .placeType(dto.placeType())
+            .regionType(dto.regionType())
+            .crops(dto.crops())
+            .operatingHours(dto.operatingHours())
+            .minParticipants(dto.minParticipants())
+            .maxParticipants(dto.maxParticipants())
+            .imageUrl(dto.imageUrl())
+            .closedDays(dto.closedDays())
+            .highlights(dto.highlights())
+            .inclusions(dto.inclusions())
+            .hashtags(dto.hashtags())
+            .hostName(dto.host().name())
+            .hostPhone(dto.host().phone())
+            .hostEmail(dto.host().email())
+            .hostFarmName(dto.host().farmName())
+            .farm(farm)
+            .build();
+
+        // 스케줄 추가
+        dto.schedule().forEach(s -> {
+            ExperienceSchedule schedule = new ExperienceSchedule(s.time(), s.activity());
+            experience.addSchedule(schedule);
+        });
+
+        return experience;
+    }
 
 
     public void addSchedule(ExperienceSchedule schedule) {

@@ -2,8 +2,6 @@ package com.onnongwa.back_end.domain.experience.controller.dto;
 
 import java.util.List;
 
-import com.onnongwa.back_end.domain.experience.entity.ExperienceSchedule;
-
 public record ExpRegisterDto(
 	// 기본 정보
 	String title,

@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
@@ -19,6 +20,7 @@ import com.onnongwa.back_end.domain.farm.entity.Farm;
 import com.onnongwa.back_end.domain.farm.repository.FarmRepository;
 import com.onnongwa.back_end.open_api.service.OpenApiService;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -31,42 +33,12 @@ public class ExperienceService {
 	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
 	private final String IMAGE_BASE_URL = "/uploads/";
 
+	@Transactional
 	public void registerExperience(ExpRegisterDto dto){
 
-		Farm farm = farmRepository.findById(1L).orElseThrow();
+		Farm farm = farmRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Farm not found with id : 1L"));
 
-		Experience experience = Experience.builder()
-			.title(dto.title())
-			.description(dto.description())
-			.location(dto.location())
-			.duration(dto.duration())
-			.price(dto.price())
-			.address(dto.address())
-			.placeType(dto.placeType())
-			.regionType(dto.regionType())
-			.crops(dto.crops())
-			.operatingHours(dto.operatingHours())
-			.minParticipants(dto.minParticipants())
-			.maxParticipants(dto.maxParticipants())
-			.imageUrl(dto.imageUrl())
-			.closedDays(dto.closedDays())
-			.highlights(dto.highlights())
-			.inclusions(dto.inclusions())
-			.hashtags(dto.hashtags())
-			.hostName(dto.host().name())
-			.hostPhone(dto.host().phone())
-			.hostEmail(dto.host().email())
-			.hostFarmName(dto.host().farmName())
-			.farm(farm)
-			.build();
-
-		// 스케줄 추가
-		dto.schedule().forEach(s -> {
-			ExperienceSchedule schedule = new ExperienceSchedule(s.time(), s.activity(), experience);
-			experience.addSchedule(schedule);
-		});
-
-		experienceRepository.save(experience);
+		experienceRepository.save(Experience.from(dto,farm));
 	}
 
 	public String saveImageAndGetUrl(MultipartFile file) throws IOException{
