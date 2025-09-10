@@ -3,6 +3,7 @@ package com.onnongwa.back_end.domain.experience.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpDetailDto;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import jakarta.persistence.*;
@@ -112,6 +113,37 @@ public class Experience {
         });
 
         return experience;
+    }
+
+    public ExpDetailDto toDto() {
+        return new ExpDetailDto(
+            this.title,
+            this.location,   // region → location
+            this.address,
+            this.placeType,
+            this.regionType,
+            this.description,
+            this.crops,
+            String.valueOf(this.price),   // int → String 변환
+            this.schedule.stream()
+                .map(s -> new ExpDetailDto.ScheduleItemDTO(s.getTime(), s.getActivity()))
+                .toList(),
+            this.operatingHours.split("-")[0].trim(), // startTime
+            this.operatingHours.split("-")[1].trim(), // endTime
+            this.closedDays,
+            this.minParticipants,
+            this.maxParticipants,
+            new ExpDetailDto.Host(
+                this.hostName,
+                this.hostPhone,
+                this.hostEmail,
+                this.hostFarmName
+            ),
+            this.imageUrl,
+            this.viewCount
+        );
+
+
     }
 
     public void addSchedule(ExperienceSchedule schedule) {

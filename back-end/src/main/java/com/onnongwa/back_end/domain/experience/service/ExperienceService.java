@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpDetailDto;
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpListDto;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.domain.experience.entity.Experience;
 import com.onnongwa.back_end.domain.experience.entity.ExperienceSchedule;
@@ -41,6 +43,28 @@ public class ExperienceService {
 		experienceRepository.save(Experience.from(dto,farm));
 	}
 
+	@Transactional
+	public ExpDetailDto getExperienceById(Long id) {
+		Experience experience = experienceRepository.findById(id)
+			.orElseThrow(() ->  new EntityNotFoundException(  "Farm not found with id : " + id));
+
+		experience.increaseViewCount();
+
+		return experience.toDto();
+	}
+
+
+	public void getTop3ExperiencesByViewCount() {
+
+		List<Experience> top3s = experienceRepository.findTop3ByViewCount();
+
+
+		for(Experience e: top3s){
+			System.out.println(e.getTitle());
+		}
+
+	}
+
 	public String saveImageAndGetUrl(MultipartFile file) throws IOException{
 		if (file.isEmpty()){
 			throw new IllegalAccessError("이미지가 존재하지 않습니다.");
@@ -58,10 +82,8 @@ public class ExperienceService {
 
 		Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
 
-		System.out.println(IMAGE_BASE_URL + savedFileName);
-
-
 		return IMAGE_BASE_URL + savedFileName;
 	}
+
 
 }
