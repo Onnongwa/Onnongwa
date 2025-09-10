@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -50,19 +51,20 @@ public class ExperienceService {
 
 		experience.increaseViewCount();
 
-		return experience.toDto();
+		return experience.toDetailDto();
 	}
 
 
-	public void getTop3ExperiencesByViewCount() {
+	public List<ExpListDto> getTop3ExperiencesByViewCount() {
 
 		List<Experience> top3s = experienceRepository.findTop3ByViewCount();
 
-
+		List<ExpListDto> dtos = new ArrayList<>();
 		for(Experience e: top3s){
-			System.out.println(e.getTitle());
+			dtos.add(e.toListDto());
 		}
 
+		return dtos;
 	}
 
 	public String saveImageAndGetUrl(MultipartFile file) throws IOException{

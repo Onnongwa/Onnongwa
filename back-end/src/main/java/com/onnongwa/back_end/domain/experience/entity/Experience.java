@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpDetailDto;
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpListDto;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import jakarta.persistence.*;
@@ -115,35 +116,56 @@ public class Experience {
         return experience;
     }
 
-    public ExpDetailDto toDto() {
+    public ExpDetailDto toDetailDto() {
         return new ExpDetailDto(
+            // 기본 정보
             this.title,
-            this.location,   // region → location
+            this.location, // Experience 엔티티의 location 필드가 DTO의 region에 해당
+            this.description,
+            String.valueOf(this.price), // int -> String 변환
+            this.imageUrl,
+            this.viewCount,
+
+            // 상세 정보
             this.address,
             this.placeType,
             this.regionType,
-            this.description,
             this.crops,
-            String.valueOf(this.price),   // int → String 변환
-            this.schedule.stream()
-                .map(s -> new ExpDetailDto.ScheduleItemDTO(s.getTime(), s.getActivity()))
-                .toList(),
-            this.operatingHours.split("-")[0].trim(), // startTime
-            this.operatingHours.split("-")[1].trim(), // endTime
+            this.operatingHours.split("-")[0].trim(), // "09:00 - 18:00" -> "09:00"
+            this.operatingHours.split("-")[1].trim(), // "09:00 - 18:00" -> "18:00"
             this.closedDays,
             this.minParticipants,
             this.maxParticipants,
+
+            // 일정
+            this.schedule.stream()
+                .map(s -> new ExpDetailDto.ScheduleItemDTO(s.getTime(), s.getActivity()))
+                .toList(),
+
+            this.highlights,
+            this.inclusions,
+            this.hashtags,
+
+            // 운영자 정보
             new ExpDetailDto.Host(
                 this.hostName,
                 this.hostPhone,
                 this.hostEmail,
                 this.hostFarmName
-            ),
-            this.imageUrl,
-            this.viewCount
+            )
         );
+    }
 
-
+    public ExpListDto toListDto(){
+        return new ExpListDto(
+            this.id,
+            this.imageUrl,
+            this.title,
+            this.description,
+            this.location,
+            this.price,
+            this.hashtags
+        );
     }
 
     public void addSchedule(ExperienceSchedule schedule) {
