@@ -47,8 +47,8 @@ public class ExperienceController {
 
 	@GetMapping("/popular")
 	public ResponseEntity<?> getTop3ExperiencesByViewCount() {
-		experienceService.getTop3ExperiencesByViewCount();
-		return null;
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(experienceService.getTop3ExperiencesByViewCount());
 	}
 
 	@PostMapping("/onboarding")
