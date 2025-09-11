@@ -1,0 +1,33 @@
+### 환경 변수
+@baseUrl = http://localhost:8080
+@experienceId = 2
+@userId = 1
+@jobId = 1
+
+### 1) 영상 생성 트리거 (대본 생성 + Job/Scene 저장 + Runway 제출)
+# @name generateVideo
+POST {{baseUrl}}/api/videos/experiences/{{experienceId}}/generate?userId={{userId}}
+Content-Type: application/json
+
+{
+  "title": "테스트 홍보 영상",
+  "templateVersion": "v1"
+}
+
+> {%
+    const body = JSON.parse(response.body);
+    if (!body.jobId) throw new Error("jobId가 응답에 없습니다.");
+    client.global.set("jobId", String(body.jobId));
+    client.log("✅ Created jobId = " + body.jobId);
+%}
+
+### 2) 잡 상태 조회
+# Runway 렌더링/폴링이 진행 중일 수 있음
+GET {{baseUrl}}/api/videos/jobs/{{jobId}}
+
+### 3) 씬 상세 조회 (각 5초, imageIndex=0/1/2)
+GET {{baseUrl}}/api/videos/jobs/{{jobId}}/scenes
+
+### 4) 최종 파일 스트리밍 (합성 완료 후 접근 가능)
+# 합성이 아직 안 됐으면 404 반환
+GET {{baseUrl}}/api/videos/jobs/{{jobId}}/file

@@ -20,6 +20,7 @@ public class Experience {
     private int totalTime;
     private int price;
     private String schedule;
+    @Enumerated(EnumType.STRING)
     private Location locationType;
     private int minCapacity;
     private int maxCapacity;
