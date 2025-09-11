@@ -15,6 +15,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AccessLevel;
@@ -70,6 +72,18 @@ public class VideoScene {
 	@UpdateTimestamp
 	@Column(name = "updated_at", nullable = false)
 	private LocalDateTime updatedAt;
+
+	@PrePersist
+	protected void onCreate() {
+		java.time.LocalDateTime now = java.time.LocalDateTime.now();
+		if (createdAt == null) createdAt = now;
+		if (updatedAt == null) updatedAt = now;
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = java.time.LocalDateTime.now();
+	}
 
 	public void markRendering(String taskId) {
 		this.state = VideoSceneState.RENDERING;

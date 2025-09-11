@@ -30,6 +30,7 @@ public class VideoComposerService {
 
 	private final WebClient.Builder webClientBuilder; // 다운로드 용
 	private final MediaProperties mediaProps;
+	private final JobTtsService jobTtsService;
 
 	private static final int TARGET_AUDIO_SEC = 15; // 15초 고정
 
@@ -59,6 +60,14 @@ public class VideoComposerService {
 			Path jobDir = Paths.get(mediaProps.getBaseDir(), "jobs", String.valueOf(jobId));
 			Files.createDirectories(jobDir);
 
+			if (job.getTtsUrl() == null || job.getTtsUrl().isBlank()) {
+				try {
+					jobTtsService.ensureLocalTtsFile(jobId);
+				} catch (Exception e) {
+					log.warn("TTS 생성 실패(오디오 없이 진행). jobId={}, err={}", jobId, e.toString());
+				}
+			}
+
 			// 1. 각 씬 비디오 다운로드
 			List<Path> partFiles = downloadAll(scenes, jobDir);
 
@@ -75,17 +84,29 @@ public class VideoComposerService {
 			Path tts15 = null;
 			if (job.getTtsUrl() != null && !job.getTtsUrl().isBlank()) {
 				Path ttsRaw = jobDir.resolve("tts_src");
-				downloadToFile(job.getTtsUrl(), ttsRaw);
-				tts15 = jobDir.resolve("tts_15s.wav");
-				boolean okAudio = runFfmpeg(new String[]{
-					mediaProps.getFfmpegPath(), "-y",
-					"-i", ttsRaw.toAbsolutePath().toString(),
-					"-af", "apad=pad_dur=" + TARGET_AUDIO_SEC + ",atrim=0:" + TARGET_AUDIO_SEC + ",asetpts=N/SR/TB",
-					tts15.toAbsolutePath().toString()
-				});
-				if (!okAudio) {
-					log.warn("TTS normalize failed; proceeding without audio. jobId={}", jobId);
-					tts15 = null; // 오디오 없이 진행
+				if (job.getTtsUrl().startsWith("file:")) {
+					try {
+						Path local = Path.of(java.net.URI.create(job.getTtsUrl()));
+						Files.copy(local, ttsRaw, StandardCopyOption.REPLACE_EXISTING);
+					} catch (Exception e) {
+						log.warn("TTS local copy 실패; 오디오 없이 진행. jobId={}, err={}", jobId, e.toString());
+					}
+				} else {
+					downloadToFile(job.getTtsUrl(), ttsRaw); // 기존 http(s) 다운로드 재사용
+				}
+
+				if (Files.exists(ttsRaw)) {
+					tts15 = jobDir.resolve("tts_15s.wav");
+					boolean okAudio = runFfmpeg(new String[]{
+						mediaProps.getFfmpegPath(), "-y",
+						"-i", ttsRaw.toAbsolutePath().toString(),
+						"-af", "apad=pad_dur=" + TARGET_AUDIO_SEC + ",atrim=0:" + TARGET_AUDIO_SEC + ",asetpts=N/SR/TB",
+						tts15.toAbsolutePath().toString()
+					});
+					if (!okAudio) {
+						log.warn("TTS normalize 실패; 오디오 없이 진행. jobId={}", jobId);
+						tts15 = null;
+					}
 				}
 			}
 

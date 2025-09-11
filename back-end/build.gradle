@@ -38,6 +38,9 @@ dependencies {
 
 	// Bean Validation(JSR 380 / Jakarta Validation)
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+	// tts
+	implementation 'com.google.cloud:google-cloud-texttospeech:2.47.0'
 }
 
 tasks.named('test') {

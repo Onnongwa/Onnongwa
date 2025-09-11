@@ -18,6 +18,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OrderBy;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -81,5 +83,17 @@ public class VideoJob {
 	@OneToMany(mappedBy = "job", cascade = CascadeType.ALL, orphanRemoval = true)
 	@OrderBy("sceneIndex ASC")
 	private List<VideoScene> scenes = new ArrayList<>();
+
+	@PrePersist
+	protected void onCreate() {
+		java.time.LocalDateTime now = java.time.LocalDateTime.now();
+		if (createdAt == null) createdAt = now;
+		if (updatedAt == null) updatedAt = now;
+	}
+
+	@PreUpdate
+	protected void onUpdate() {
+		updatedAt = java.time.LocalDateTime.now();
+	}
 
 }
