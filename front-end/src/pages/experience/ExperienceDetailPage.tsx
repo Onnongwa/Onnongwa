@@ -1,10 +1,41 @@
-// 체험 상세
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import {
     MapPin, Tag, Calendar, Users, Clock, Star,
     CheckCircle, Compass, Activity, TreePine, PartyPopper, Mail
 } from "lucide-react";
 
+// API 응답 데이터의 타입을 정의합니다. (highlights, inclusions, hashtags 추가)
+type ApiScheduleItem = {
+    time: string;
+    activity: string;
+};
+
+type ApiHost = {
+    hostName: string;
+    hostPhone: string;
+    hostEmail: string;
+    farmName: string;
+};
+
+type ApiExperience = {
+    title: string;
+    region: string;
+    description: string;
+    price: string;
+    imageUrl: string;
+    startTime: string;
+    endTime: string;
+    selectedClosedDays: string[];
+    scheduleItems: ApiScheduleItem[];
+    highlights: string[];
+    inclusions: string[];
+    hashtags: string[];
+    host: ApiHost;
+};
+
+
+// 컴포넌트에서 사용할 데이터 타입을 정의합니다.
 type ScheduleItem = { time: string; activity: string };
 type NearbyPlace = { name: string; description: string; image?: string; category: string; link: string };
 
@@ -15,53 +46,73 @@ const categoryIcons: Record<string, React.ComponentType<{ className?: string }>>
 };
 
 export default function ExperienceDetailPage() {
-    const { id } = useParams(); // /experiences/:id
+    const { id } = useParams<{ id: string }>();
 
-    const experience = {
-        id: id ?? "potato-farm",
-        title: "땅속 보물 찾기, 아이와 함께하는 감자 명상 🍠",
-        description: `“평창 감자 힐링 팜” – 땅과 마음을 채우는 특별한 하루 🥔✨
-                        강원도 평창의 깨끗한 들판에서 펼쳐지는 프리미엄 감자 수확 체험. 👨‍👩‍👧‍👦
-                        아이들과 함께 흙 속 깊이 숨은 ‘자연의 보물’을 찾아내며,
-                        수확의 설렘과 자연의 고마움을 온몸으로 느껴보세요. 🌿🤲
-                        감자를 캐는 동안 고요한 바람과 흙 내음을 만끽하는 ‘감자 명상’ 시간이 준비되어 있습니다. 🧘‍♀️🌬️
-                        일상의 복잡함을 내려놓고, 오롯이 현재에 머무는 순간을 경험하세요. 😌
-                        수확한 감자는 그대로 가져갈 수 있으며,
-                        현장에서 갓 캔 감자로 만든 따끈한 간식도 맛볼 수 있습니다. 😋
-                        가족, 친구, 연인과 함께하는 평창 감자 힐링 팜에서
-                        평생 기억될 하루를 만들어보세요. ❤️`,
-        location: "강원도 평창",
-        price: "50,000원",
-        hashtags: ["#감자캐기", "#가족여행", "#농촌체험", "#힐링", "#자연교감", "#평창"],
-        image: "/placeholder.svg?height=400&width=600",
-        host: {
-            name: "평창 감자 농장",
-            contact: "010-1234-5678",
-            email: "potato.farm@example.com",
-        },
-        duration: "약 3시간",
-        availableDates: "매주 주말 (사전 예약 필수)",
-        schedule: [
-            { time: "10:00", activity: "✅ 농장 도착 및 환영" },
-            { time: "10:30", activity: "🛠️ 감자 캐기 도구 설명 및 안전 교육" },
-            { time: "11:00", activity: "🥔 본격적인 감자 캐기 체험 (땅속 보물 찾기)" },
-            { time: "12:00", activity: "🍽️ 수확한 감자로 만든 간식 시식 및 휴식" },
-            { time: "12:30", activity: "🧘‍♀️ 감자 명상 시간 및 자유 시간" },
-            { time: "13:00", activity: "👋 체험 마무리 및 기념품 증정" },
-        ] as ScheduleItem[],
-        highlights: [
-            "아이들이 좋아하는 땅속 보물 찾기 컨셉",
-            "청정 자연 속에서 즐기는 힐링 명상",
-            "갓 캔 유기농 감자로 만든 특별한 간식",
-            "직접 수확한 감자 가져가기",
-        ],
-        inclusions: ["체험 도구 대여", "수확 감자 (1kg)", "감자 간식", "안전 교육"],
-        nearbyPlaces: [
-            { name: "대관령 양떼목장", description: "푸른 초원에서 양들과 교감하는 목장 체험.", image: "/placeholder.svg?height=150&width=250", category: "activity", link: "#" },
-            { name: "월정사 전나무 숲길", description: "천년 고찰 월정사의 고요한 전나무 숲길을 거닐며 힐링.", image: "/placeholder.svg?height=150&width=250", category: "nature", link: "#" },
-            { name: "평창 송어축제장", description: "겨울철 얼음낚시와 다양한 즐길 거리가 가득한 축제.", image: "/placeholder.svg?height=150&width=250", category: "festival", link: "#" },
-        ] as NearbyPlace[],
-    };
+    // 서버 데이터, 로딩 상태, 에러 상태를 관리합니다.
+    const [experience, setExperience] = useState<any>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        if (!id) return;
+
+        const fetchExperienceData = async () => {
+            try {
+                setLoading(true);
+                // API 서버로 데이터 요청
+                const response = await fetch(`http://localhost:8080/api/v1/experience/${id}`);
+                if (!response.ok) {
+                    throw new Error('체험 정보를 불러오는데 실패했습니다.');
+                }
+                const data: ApiExperience = await response.json();
+
+                // API 데이터를 컴포넌트 형식에 맞게 변환
+                const formattedData = {
+                    title: data.title,
+                    description: data.description,
+                    location: data.region,
+                    price: `${parseInt(data.price).toLocaleString()}원`,
+                    image: data.imageUrl,
+                    host: {
+                        name: data.host.farmName,
+                        contact: data.host.hostPhone,
+                        email: data.host.hostEmail,
+                    },
+                    duration: `약 ${parseInt(data.endTime) - parseInt(data.startTime)}시간`,
+                    availableDates: `${data.selectedClosedDays.join(', ')} 휴무`,
+                    schedule: data.scheduleItems,
+                    // API에서 직접 받은 데이터 사용
+                    highlights: data.highlights,
+                    inclusions: data.inclusions,
+                    hashtags: data.hashtags,
+                    nearbyPlaces: [], // 이 부분은 API에 없으므로 그대로 둡니다.
+                };
+
+                setExperience(formattedData);
+            } catch (err: any) {
+                setError(err.message);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchExperienceData();
+    }, [id]); // id가 바뀔 때마다 다시 데이터를 요청합니다.
+
+    // 로딩 중일 때 표시할 화면
+    if (loading) {
+        return <div className="flex justify-center items-center h-screen">로딩 중...</div>;
+    }
+
+    // 에러 발생 시 표시할 화면
+    if (error) {
+        return <div className="flex justify-center items-center h-screen text-red-500">오류: {error}</div>;
+    }
+
+    // 데이터가 없을 때 표시할 화면
+    if (!experience) {
+        return <div className="flex justify-center items-center h-screen">해당 체험을 찾을 수 없습니다.</div>;
+    }
 
     return (
         <>
@@ -108,7 +159,7 @@ export default function ExperienceDetailPage() {
                             체험 일정
                         </h3>
                         <div className="space-y-3">
-                            {experience.schedule.map((item, idx) => (
+                            {experience.schedule.map((item: ScheduleItem, idx: number) => (
                                 <div key={idx} className="flex items-start gap-3 p-3 bg-background rounded-md shadow-sm">
                                     <span className="font-semibold w-16 flex-shrink-0">{item.time}</span>
                                     <span>{item.activity}</span>
@@ -124,7 +175,7 @@ export default function ExperienceDetailPage() {
                             체험 하이라이트
                         </h3>
                         <ul className="space-y-2">
-                            {experience.highlights.map((h, idx) => (
+                            {experience.highlights.map((h: string, idx: number) => (
                                 <li key={idx} className="flex items-center gap-2">
                                     <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
                                     <span>{h}</span>
@@ -140,10 +191,10 @@ export default function ExperienceDetailPage() {
                             포함 사항
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                            {experience.inclusions.map((inc, idx) => (
+                            {experience.inclusions.map((inc: string, idx: number) => (
                                 <span key={idx} className="bg-primary text-primary-foreground px-3 py-1 rounded-full text-sm font-medium">
-                  {inc}
-                </span>
+                                    {inc}
+                                </span>
                             ))}
                         </div>
                     </div>
@@ -155,10 +206,10 @@ export default function ExperienceDetailPage() {
                             해시태그
                         </h3>
                         <div className="flex flex-wrap gap-2">
-                            {experience.hashtags.map((tag, idx) => (
+                            {experience.hashtags.map((tag: string, idx: number) => (
                                 <span key={idx} className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-sm">
-                  {tag}
-                </span>
+                                    {tag}
+                                </span>
                             ))}
                         </div>
                     </div>
@@ -177,53 +228,35 @@ export default function ExperienceDetailPage() {
                                 <>
                                     <br />
                                     <span className="inline-flex items-center gap-1">
-                    <Mail className="h-4 w-4" />
-                    <a href={`mailto:${experience.host.email}`} className="hover:underline">
-                      {experience.host.email}
-                    </a>
-                  </span>
+                                        <Mail className="h-4 w-4" />
+                                        <a href={`mailto:${experience.host.email}`} className="hover:underline">
+                                            {experience.host.email}
+                                        </a>
+                                    </span>
                                 </>
                             )}
                         </p>
                     </div>
 
-                    {/* 같이 가볼만한 곳 */}
-                    <div className="border-t border-gray-200 pt-6 mb-8">
-                        <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
-                            <Compass className="h-6 w-6 text-primary" />
-                            같이 가볼만한 곳
-                        </h3>
-                        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                            {experience.nearbyPlaces.map((place, idx) => {
-                                const Icon = categoryIcons[place.category];
-                                return (
-                                    <div key={idx} className="flex flex-col rounded border bg-white shadow-sm">
-                                        <div className="relative">
-                                            <img
-                                                src={place.image || "/placeholder.svg"}
-                                                width={250}
-                                                height={150}
-                                                alt={place.name}
-                                                className="w-full aspect-[3/2] object-cover rounded-t"
-                                            />
-                                            {Icon && (
-                                                <div className="absolute top-2 left-2 bg-primary text-primary-foreground p-1 rounded-full shadow">
-                                                    <Icon className="h-5 w-5" />
-                                                </div>
-                                            )}
+                    {/* 같이 가볼만한 곳 (API에 데이터가 없으므로 렌더링되지 않음) */}
+                    {experience.nearbyPlaces && experience.nearbyPlaces.length > 0 && (
+                        <div className="border-t border-gray-200 pt-6 mb-8">
+                            <h3 className="text-xl font-semibold mb-3 flex items-center gap-2">
+                                <Compass className="h-6 w-6 text-primary" />
+                                같이 가볼만한 곳
+                            </h3>
+                            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                                {experience.nearbyPlaces.map((place: NearbyPlace, idx: number) => {
+                                    const Icon = categoryIcons[place.category];
+                                    return (
+                                        <div key={idx} className="flex flex-col rounded border bg-white shadow-sm">
                                         </div>
-                                        <div className="p-3">
-                                            <div className="text-base font-semibold">{place.name}</div>
-                                            <div className="text-xs text-gray-600 line-clamp-2">{place.description}</div>
-                                            <a href={place.link} className="text-sm text-primary hover:underline mt-2 inline-block">
-                                                자세히 보기
-                                            </a>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                                    );
+                                })}
+                            </div>
                         </div>
-                    </div>
+                    )}
+
 
                     <div className="pt-4 border-t border-gray-200">
                         <button className="w-full bg-primary text-primary-foreground hover:bg-primary/90 text-lg py-3 rounded">

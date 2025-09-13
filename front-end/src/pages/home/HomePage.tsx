@@ -1,13 +1,37 @@
 // src/pages/home/HomePage.tsx  (또는 .jsx)
-import React from "react";
+import React, {useEffect, useState} from "react";
 import { Link } from "react-router-dom";
 import { Search, MapPin, Leaf, Users, SlidersHorizontal, Sparkles } from "lucide-react";
 
+const API_BASE = "http://localhost:8080/api/v1/experience"
+
+interface ExpListDto {
+    id : number;
+    imageUrl: string;
+    title: string;
+    description: string;
+    location: string;
+    price: number;
+    hashTag: string[];
+}
+
+
 export default function HomePage() {
+
+    const [experiences, setExperiences] = useState<ExpListDto[]>([]);
+
+    useEffect(() => {
+        fetch(`${API_BASE}/popular`)  // 백엔드 API 호출
+            .then(res => res.json())
+            .then(data => setExperiences(data))
+            .catch(err => console.error("체험 불러오기 실패:", err));
+    }, []);
+
     return (
         <>
             {/* Hero */}
-            <section className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground flex flex-col items-center justify-center text-center px-4">
+            <section
+                className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground flex flex-col items-center justify-center text-center px-4">
                 <div className="space-y-4 max-w-3xl">
                     <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl">
                         자연에서 찾는 나만의 저속노화 라이프
@@ -30,7 +54,7 @@ export default function HomePage() {
                                     className="inline-flex items-center gap-2 px-3 py-2 rounded bg-primary-foreground text-primary border"
                                     type="button"
                                 >
-                                    <SlidersHorizontal className="h-5 w-5" />
+                                    <SlidersHorizontal className="h-5 w-5"/>
                                     <span className="sr-only">필터</span>
                                 </button>
                             </summary>
@@ -63,14 +87,16 @@ export default function HomePage() {
 
                                     <div className="flex justify-end gap-2">
                                         <button className="px-3 py-2 border rounded">초기화</button>
-                                        <button className="px-3 py-2 rounded bg-primary text-primary-foreground">적용</button>
+                                        <button className="px-3 py-2 rounded bg-primary text-primary-foreground">적용
+                                        </button>
                                     </div>
                                 </div>
                             </div>
                         </details>
 
-                        <button type="button" className="px-3 py-2 rounded bg-secondary text-secondary-foreground border">
-                            <Search className="h-5 w-5" />
+                        <button type="button"
+                                className="px-3 py-2 rounded bg-secondary text-secondary-foreground border">
+                            <Search className="h-5 w-5"/>
                             <span className="sr-only">검색</span>
                         </button>
                     </div>
@@ -88,55 +114,41 @@ export default function HomePage() {
                     </div>
 
                     <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                        {[
-                            {
-                                title: "땅속 보물 찾기, 아이와 함께하는 감자 명상 🍠",
-                                loc: "강원도 평창",
-                                price: "50,000원",
-                                href: "/experiences/potato-farm",
-                                desc:
-                                    "흙 내음 가득한 밭에서 직접 감자를 캐며 자연과 교감하는 시간.\n아이들에게는 신나는 모험을, 어른들에게는 평화로운 휴식을 선사합니다.",
-                                tags: "#감자캐기 #가족여행 #농촌체험 #힐링",
-                            },
-                            {
-                                title: "바다의 보물, 갯벌에서 찾다",
-                                loc: "충청남도 태안",
-                                price: "35,000원",
-                                href: "/experiences/clam-digging",
-                                desc:
-                                    "드넓은 갯벌에서 신선한 조개를 직접 캐는 이색 체험.\n자연의 신비와 수확의 기쁨을 동시에 느껴보세요.",
-                                tags: "#갯벌체험 #조개잡이 #바다여행 #자연학습",
-                            },
-                            {
-                                title: "한지에 담는 한국의 미",
-                                loc: "전라북도 전주",
-                                price: "40,000원",
-                                href: "/experiences/hanji-craft",
-                                desc:
-                                    "전통 한지의 아름다움을 배우고 나만의 작품을 만드는 시간.\n고즈넉한 한옥에서 예술적 감각을 깨워보세요.",
-                                tags: "#한지공예 #전통문화 #공예체험 #전주여행",
-                            },
-                        ].map((c, i) => (
-                            <div key={i} className="flex flex-col rounded border bg-white shadow-sm">
+                        {experiences.map((c, i) => (
+                            <div key={i} className="flex flex-col rounded border bg-white shadow-sm h-full">
                                 <img
-                                    src="/placeholder.svg?height=200&width=300"
-                                    width={300}
-                                    height={200}
+                                    src={c.imageUrl}
                                     alt={`${c.title} 이미지`}
                                     className="aspect-video object-cover rounded-t"
                                 />
-                                <div className="p-4">
-                                    <h3 className="font-semibold text-lg">{c.title}</h3>
-                                    <p className="text-sm text-muted-foreground whitespace-pre-line mt-1">{c.desc}</p>
+                                <div className="p-4 flex flex-col flex-1">
+                                    {/* 제목 */}
+                                    <h3 className="font-semibold text-lg truncate">{c.title}</h3>
+
+                                    {/* 설명 */}
+                                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                                        {c.description}
+                                    </p>
+
+                                    {/* 위치 + 가격 */}
                                     <div className="flex items-center justify-between text-sm text-muted-foreground my-3">
-                    <span className="inline-flex items-center gap-1">
-                      <MapPin className="h-4 w-4" />
-                        {c.loc}
-                    </span>
-                                        <span>{c.price}</span>
+              <span className="inline-flex items-center gap-1">
+                <MapPin className="h-4 w-4" />
+                  {c.location}
+              </span>
+                                        <span>{c.price.toLocaleString()}원</span>
                                     </div>
-                                    <div className="text-xs text-muted-foreground mb-3">{c.tags}</div>
-                                    <Link className="block w-full text-center px-3 py-2 rounded bg-primary text-primary-foreground" to={c.href}>
+
+                                    {/* 해시태그 */}
+                                    <div className="text-xs text-muted-foreground mb-3">
+                                        {c.hashTag.join(" ")}
+                                    </div>
+
+                                    {/* 버튼 (항상 하단 고정) */}
+                                    <Link
+                                        className="block w-full text-center px-3 py-2 rounded bg-primary text-primary-foreground mt-auto"
+                                        to={`/experiences/${c.id}`} // id 있으면 교체
+                                    >
                                         자세히 보기
                                     </Link>
                                 </div>
@@ -155,21 +167,21 @@ export default function HomePage() {
                     </p>
                     <div className="grid gap-8 md:grid-cols-3">
                         <div className="p-6 flex flex-col items-center text-center rounded border bg-white">
-                            <Sparkles className="h-12 w-12 text-primary mb-4" />
+                            <Sparkles className="h-12 w-12 text-primary mb-4"/>
                             <h3 className="font-semibold mb-2">AI 홍보글 자동 생성</h3>
                             <p className="text-sm text-muted-foreground">
                                 최소한의 정보만 입력하면 AI가 매력적인 체험 소개글을 자동으로 작성해드립니다.
                             </p>
                         </div>
                         <div className="p-6 flex flex-col items-center text-center rounded border bg-white">
-                            <Leaf className="h-12 w-12 text-primary mb-4" />
+                            <Leaf className="h-12 w-12 text-primary mb-4"/>
                             <h3 className="font-semibold mb-2">해시태그 기반 큐레이션</h3>
                             <p className="text-sm text-muted-foreground">
                                 다양한 해시태그와 검색 기능을 통해 원하는 체험을 쉽고 빠르게 찾아보세요.
                             </p>
                         </div>
                         <div className="p-6 flex flex-col items-center text-center rounded border bg-white">
-                            <Users className="h-12 w-12 text-primary mb-4" />
+                            <Users className="h-12 w-12 text-primary mb-4"/>
                             <h3 className="font-semibold mb-2">도농 상생 O2O</h3>
                             <p className="text-sm text-muted-foreground">
                                 온라인에서 쉽게 정보를 얻고 예약하여 오프라인 체험으로 이어지는 상생 구조를 만듭니다.
@@ -180,7 +192,8 @@ export default function HomePage() {
             </section>
 
             {/* CTA */}
-            <section className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground flex flex-col items-center justify-center text-center px-4">
+            <section
+                className="w-full py-12 md:py-24 lg:py-32 bg-primary text-primary-foreground flex flex-col items-center justify-center text-center px-4">
                 <div className="space-y-4">
                     <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">
                         농어촌민이신가요? 당신의 삶을 공유하고 수익을 창출하세요!
