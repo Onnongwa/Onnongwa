@@ -1,0 +1,28 @@
+{
+  "properties": {
+    "id": {
+      "type": "long"
+    },
+    "title": {
+      "type": "text",
+      "analyzer": "korean_analyzer",
+      "search_analyzer": "korean_analyzer"
+    },
+    "description": {
+      "type": "text",
+      "analyzer": "korean_analyzer",
+      "search_analyzer": "korean_analyzer"
+    },
+    "location": {
+      "type": "text",
+      "analyzer": "korean_analyzer",
+      "search_analyzer": "korean_analyzer"
+    },
+    "placeType": {
+      "type": "keyword"
+    },
+    "regionType": {
+      "type": "keyword"
+    }
+  }
+}
