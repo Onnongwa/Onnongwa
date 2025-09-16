@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @Setting(settingPath = "elasticsearch/experience-setting.json")
 @Mapping(mappingPath = "elasticsearch/experience-mapping.json")
-@Document(indexName = "Experience", createIndex = true)
+@Document(indexName = "experience", createIndex = true)
 @Builder
 public class ExperienceDocument {
 
@@ -52,7 +52,7 @@ public class ExperienceDocument {
 	}
 
 
-	public ExperienceDocument from(Experience experience){
+	public static ExperienceDocument from(Experience experience){
 		return new ExperienceDocument(
 			experience.getId(),
 			experience.getTitle(),
