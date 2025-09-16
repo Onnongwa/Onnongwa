@@ -1,0 +1,8 @@
+package com.onnongwa.back_end.domain.experience.elasticsearch.repository;
+
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+
+import com.onnongwa.back_end.domain.experience.elasticsearch.document.ExperienceDocument;
+
+public interface ExperienceElasticRepository extends ElasticsearchRepository<ExperienceDocument, Long> {
+}
