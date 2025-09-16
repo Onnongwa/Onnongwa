@@ -1,4 +1,4 @@
-package com.onnongwa.back_end.domain.experience.elasticsearch;
+package com.onnongwa.back_end.domain.experience.elasticsearch.document;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
@@ -35,10 +35,10 @@ public class ExperienceDocument {
 	@Field(type = FieldType.Text)
 	private String location;        // 지역 (ex: 강원도 평창군)
 
-	@Field(type = FieldType.Text)
+	@Field(type = FieldType.Keyword)
 	private String placeType;       // 실내/실외
 
-	@Field(type = FieldType.Text)
+	@Field(type = FieldType.Keyword)
 	private String regionType;      // 농촌/어촌
 
 	@Builder
