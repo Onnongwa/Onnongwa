@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartFile;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpDetailDto;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpListDto;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
+import com.onnongwa.back_end.domain.experience.elasticsearch.document.ExperienceDocument;
+import com.onnongwa.back_end.domain.experience.elasticsearch.repository.ExperienceElasticRepository;
 import com.onnongwa.back_end.domain.experience.entity.Experience;
 import com.onnongwa.back_end.domain.experience.entity.ExperienceSchedule;
 import com.onnongwa.back_end.domain.experience.repository.ExperienceRepository;
@@ -31,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class ExperienceService {
 
 	private final ExperienceRepository experienceRepository;
+	private final ExperienceElasticRepository experienceElasticRepository;
 	private final FarmRepository farmRepository;
 
 	private final String UPLOAD_DIR = System.getProperty("user.dir") + "/uploads/";
@@ -41,7 +44,9 @@ public class ExperienceService {
 
 		Farm farm = farmRepository.findById(1L).orElseThrow(() -> new EntityNotFoundException("Farm not found with id : 1L"));
 
-		experienceRepository.save(Experience.from(dto,farm));
+		Experience experience = experienceRepository.save(Experience.from(dto,farm));;
+
+		experienceElasticRepository.save(ExperienceDocument.from(experience));
 	}
 
 	@Transactional
@@ -86,6 +91,4 @@ public class ExperienceService {
 
 		return IMAGE_BASE_URL + savedFileName;
 	}
-
-
 }
