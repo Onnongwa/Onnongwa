@@ -31,12 +31,6 @@ public class VideoController {
 	private final VideoJobRepository jobRepository;
 	private final VideoSceneRepository sceneRepository;
 
-	/**
-	 * [POST] /api/videos/experiences/{experienceId}/generate
-	 * - 요청: GenerateVideoRequest(title, templateVersion)  // (aspectRatio, sceneCount는 무시)
-	 * - 동작: 대본 생성 + Job/Scene 저장 + 즉시 Runway 제출
-	 * - 응답: 생성된 jobId
-	 */
 	@PostMapping("/experiences/{experienceId}/generate")
 	public ResponseEntity<CreateJobResponse> generate(
 		@PathVariable Long experienceId,

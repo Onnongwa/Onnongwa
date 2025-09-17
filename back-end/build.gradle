@@ -41,6 +41,15 @@ dependencies {
 
 	// tts
 	implementation 'com.google.cloud:google-cloud-texttospeech:2.47.0'
+
+	// Google API Client
+	implementation 'com.google.api-client:google-api-client:2.6.0'
+
+	// OAuth2 Client (Jetty transport 포함)
+	implementation 'com.google.oauth-client:google-oauth-client-jetty:1.36.0'
+
+	// YouTube Data API v3
+	implementation 'com.google.apis:google-api-services-youtube:v3-rev20250714-2.0.0'
 }
 
 tasks.named('test') {

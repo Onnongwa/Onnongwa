@@ -3,6 +3,7 @@
 @experienceId = 2
 @userId = 1
 @jobId = 1
+@filePath = C:/Users/USER/IdeaProjects/Onnongwa/media/jobs/11/final.mp4
 
 ### 1) 영상 생성 트리거 (대본 생성 + Job/Scene 저장 + Runway 제출)
 # @name generateVideo
@@ -21,13 +22,14 @@ Content-Type: application/json
     client.log("✅ Created jobId = " + body.jobId);
 %}
 
-### 2) 잡 상태 조회
-# Runway 렌더링/폴링이 진행 중일 수 있음
-GET {{baseUrl}}/api/videos/jobs/{{jobId}}
 
-### 3) 씬 상세 조회 (각 5초, imageIndex=0/1/2)
-GET {{baseUrl}}/api/videos/jobs/{{jobId}}/scenes
+### 2) 유튜브 업로드 트리거 (최종 mp4 업로드)
+# @name uploadToYouTube
+POST {{baseUrl}}/api/video-jobs/{{jobId}}/youtube-upload?filePath={{filePath}}
 
-### 4) 최종 파일 스트리밍 (합성 완료 후 접근 가능)
-# 합성이 아직 안 됐으면 404 반환
-GET {{baseUrl}}/api/videos/jobs/{{jobId}}/file
+> {%
+    const body = JSON.parse(response.body);
+    if (!body.videoId) throw new Error("videoId가 응답에 없습니다.");
+    client.global.set("youtubeVideoId", body.videoId);
+    client.log("Uploaded! https://youtu.be/" + body.videoId);
+%}

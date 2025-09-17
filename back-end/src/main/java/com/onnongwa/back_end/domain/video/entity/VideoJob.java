@@ -72,6 +72,9 @@ public class VideoJob {
 	@Column(name = "final_video_url", length = 1000)
 	private String finalVideoUrl;
 
+	@Column(name = "category_id", nullable = false)
+	private Integer categoryId;
+
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false, updatable = false)
 	private LocalDateTime createdAt;
