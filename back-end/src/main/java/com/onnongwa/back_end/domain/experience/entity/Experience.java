@@ -3,6 +3,8 @@ package com.onnongwa.back_end.domain.experience.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpDetailDto;
+import com.onnongwa.back_end.domain.experience.controller.dto.ExpListDto;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
 import com.onnongwa.back_end.domain.farm.entity.Farm;
 import jakarta.persistence.*;
@@ -32,11 +34,11 @@ public class Experience {
 
     // 운영 정보
     private String operatingHours;  // 운영 시간 (ex: "09:00 - 18:00")
-
     private int minParticipants;    // 최소 인원
     private int maxParticipants;    // 최대 인원
-
     private String imageUrl;        // 대표 이미지 URL
+
+    private int viewCount; // 조회수
 
     @ElementCollection
     @CollectionTable(name = "experience_closed_days", joinColumns = @JoinColumn(name = "experience_id"))
@@ -93,6 +95,7 @@ public class Experience {
             .minParticipants(dto.minParticipants())
             .maxParticipants(dto.maxParticipants())
             .imageUrl(dto.imageUrl())
+            .viewCount(0)
             .closedDays(dto.closedDays())
             .highlights(dto.highlights())
             .inclusions(dto.inclusions())
@@ -113,10 +116,65 @@ public class Experience {
         return experience;
     }
 
+    public ExpDetailDto toDetailDto() {
+        return new ExpDetailDto(
+            // 기본 정보
+            this.title,
+            this.location, // Experience 엔티티의 location 필드가 DTO의 region에 해당
+            this.description,
+            String.valueOf(this.price), // int -> String 변환
+            this.imageUrl,
+            this.viewCount,
+
+            // 상세 정보
+            this.address,
+            this.placeType,
+            this.regionType,
+            this.crops,
+            this.operatingHours.split("-")[0].trim(), // "09:00 - 18:00" -> "09:00"
+            this.operatingHours.split("-")[1].trim(), // "09:00 - 18:00" -> "18:00"
+            this.closedDays,
+            this.minParticipants,
+            this.maxParticipants,
+
+            // 일정
+            this.schedule.stream()
+                .map(s -> new ExpDetailDto.ScheduleItemDTO(s.getTime(), s.getActivity()))
+                .toList(),
+
+            this.highlights,
+            this.inclusions,
+            this.hashtags,
+
+            // 운영자 정보
+            new ExpDetailDto.Host(
+                this.hostName,
+                this.hostPhone,
+                this.hostEmail,
+                this.hostFarmName
+            )
+        );
+    }
+
+    public ExpListDto toListDto(){
+        return new ExpListDto(
+            this.id,
+            this.imageUrl,
+            this.title,
+            this.description,
+            this.location,
+            this.price,
+            this.hashtags
+        );
+    }
 
     public void addSchedule(ExperienceSchedule schedule) {
         this.schedule.add(schedule);
         schedule.setExperience(this);
+    }
+
+    public void increaseViewCount() {
+        this.viewCount++;
     }
 
 }
