@@ -70,7 +70,6 @@ export default function RecommendOnboardingPage() {
   const handleNext = () => setCurrentStep((s) => Math.min(s + 1, totalSteps));
   const handlePrevious = () => setCurrentStep((s) => Math.max(s - 1, 1));
 
-  // ✅ onChange는 항상 업데이트 (IME 중에도)
   const handleInputChange =
     (key: keyof FormData) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
