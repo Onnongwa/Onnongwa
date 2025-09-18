@@ -22,12 +22,6 @@ public class VideoJobService {
 	private final VideoJobRepository jobRepo;
 	private final VideoSceneRepository sceneRepo;
 
-	/**
-	 * 새 파이프라인 전용:
-	 * - VideoJob 생성 (promoText 저장, 상태 CREATED)
-	 * - VideoScene 3개 생성 (sceneIndex=0..2, imageIndex=sceneIndex, duration=5, state=QUEUED)
-	 * @return 생성된 jobId
-	 */
 	@Transactional
 	public Long createJobWithScenes(Long experienceId,
 		Long userId,

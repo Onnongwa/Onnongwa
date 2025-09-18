@@ -16,7 +16,7 @@ public class JobTtsService {
 
 	private final VideoJobRepository jobRepo;
 	private final MediaProperties mediaProps;
-	private final TextToSpeechClient ttsClient; // ← Bean 주입
+	private final TextToSpeechClient ttsClient;
 
 	@PreDestroy
 	public void close() {
@@ -42,7 +42,7 @@ public class JobTtsService {
 		try { Files.write(ttsMp3, mp3); }
 		catch (Exception e) { throw new RuntimeException("TTS 파일 저장 실패", e); }
 
-		job.setTtsUrl(ttsMp3.toUri().toString()); // file:///.../tts_src.mp3
+		job.setTtsUrl(ttsMp3.toUri().toString());
 	}
 
 
@@ -50,12 +50,12 @@ public class JobTtsService {
 		try {
 			var input = SynthesisInput.newBuilder().setText(text).build();
 			var voice = VoiceSelectionParams.newBuilder()
-				.setName("ko-KR-Neural2-C")  // 필요시 교체: ko-KR-Standard-A/B..., Wavenet, Neural2 등
+				.setName("ko-KR-Neural2-C")
 				.setLanguageCode("ko-KR")
 				.build();
 			var audio = AudioConfig.newBuilder()
 				.setAudioEncoding(AudioEncoding.MP3)
-				.setSpeakingRate(1.02) // 쇼츠 느낌으로 약간 빠르게
+				.setSpeakingRate(1.02)
 				.setPitch(0.0)
 				.build();
 

@@ -28,21 +28,12 @@ public class VideoComposerService {
 	private final VideoJobRepository jobRepo;
 	private final VideoSceneRepository sceneRepo;
 
-	private final WebClient.Builder webClientBuilder; // 다운로드 용
+	private final WebClient.Builder webClientBuilder;
 	private final MediaProperties mediaProps;
 	private final JobTtsService jobTtsService;
 
 	private static final int TARGET_AUDIO_SEC = 15; // 15초 고정
 
-	/**
-	 * 모든 Scene이 DONE이면 최종 합성한다.
-	 * - 작업 디렉토리: {baseDir}/jobs/{jobId}/
-	 * - 각 씬 mp4 다운로드 → concat → (선택) TTS 오디오 입힘
-	 * - 최종 파일은 {baseDir}/jobs/{jobId}/final.mp4 로 저장
-	 * - video_job.final_video_url 에는 file:// 절대경로를 기록(임시)
-	 *
-	 * @return 최종 산출물의 로컬 파일 URL (file://...), 아직 준비 안 되었으면 null
-	 */
 	@Transactional
 	public String composeIfReady(Long jobId) {
 		VideoJob job = jobRepo.findById(jobId)
@@ -56,7 +47,6 @@ public class VideoComposerService {
 		}
 
 		try {
-			// 작업 디렉토리 준비
 			Path jobDir = Paths.get(mediaProps.getBaseDir(), "jobs", String.valueOf(jobId));
 			Files.createDirectories(jobDir);
 

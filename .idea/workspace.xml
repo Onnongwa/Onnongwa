@@ -4,17 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3e409e96-21c6-4b71-beac-50a660bc0b9e" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Onnongwa.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Onnongwa.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+    <list default="true" id="3e409e96-21c6-4b71-beac-50a660bc0b9e" name="Changes" comment="yml 파일 변경">
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/mysql.osA4Bg.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/sys.zb4BAA.meta" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules/back-end.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/.env" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/.env" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/JobTtsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/JobTtsService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/PromptService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/PromptService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoComposerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoComposerService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoJobService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoJobService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/resources/.env" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -46,46 +51,77 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Combro-Kim"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Combro-Kim&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Onnongwa/Onnongwa.git",
-    "accountId": "280b0316-e571-4155-85f5-ea4125311335"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Onnongwa/Onnongwa.git&quot;,
+    &quot;accountId&quot;: &quot;280b0316-e571-4155-85f5-ea4125311335&quot;
   }
-}]]></component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 1
-}]]></component>
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 1
+}</component>
   <component name="ProjectId" id="32pV9ymiqyxzQSS9LKJP3JEHPfA" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "feature/text2video",
-    "junie.onboarding.icon.badge.shown": "true",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;feature/text2video&quot;,
+    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  },
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
+    ]
   }
-}]]></component>
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\USER\IdeaProjects\Onnongwa\back-end\src\main\resources" />
+    </key>
+  </component>
   <component name="RunManager">
     <configuration name="BackEndApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <option name="envFilePaths">
+        <option value="$PROJECT_DIR$/back-end/src/main/resources/.env" />
+      </option>
       <module name="back-end.main" />
+      <selectedOptions>
+        <option name="environmentVariables" />
+      </selectedOptions>
       <option name="SPRING_BOOT_MAIN_CLASS" value="com.onnongwa.back_end.BackEndApplication" />
+      <extension name="net.ashald.envfile">
+        <option name="IS_ENABLED" value="true" />
+        <option name="IS_SUBST" value="false" />
+        <option name="IS_PATH_MACRO_SUPPORTED" value="false" />
+        <option name="IS_IGNORE_MISSING_FILES" value="false" />
+        <option name="IS_ENABLE_EXPERIMENTAL_INTEGRATIONS" value="false" />
+        <ENTRIES>
+          <ENTRY IS_ENABLED="true" PARSER="runconfig" IS_EXECUTABLE="false" />
+        </ENTRIES>
+      </extension>
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -106,11 +142,37 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1758117353126</updated>
-      <workItem from="1758117355203" duration="22000" />
+      <workItem from="1758117355203" duration="1757000" />
+      <workItem from="1758164757945" duration="12834000" />
+      <workItem from="1758199162878" duration="5766000" />
     </task>
+    <task id="LOCAL-00001" summary="yml 파일 변경">
+      <option name="closed" value="true" />
+      <created>1758117484433</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1758117484433</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="yml 파일 변경" />
+    <option name="LAST_COMMIT_MESSAGE" value="yml 파일 변경" />
   </component>
 </project>

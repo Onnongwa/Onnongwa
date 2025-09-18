@@ -55,12 +55,6 @@ public class PromptService {
 		this.sceneRepo = sceneRepo;
 	}
 
-	/**
-	 * ✅ 새 파이프라인 엔트리:
-	 * - OpenAI로 15초 홍보 멘트 1개 생성
-	 * - VideoJob 생성(상태 CREATED) + VideoScene 3개(0,1,2) 생성(상태 QUEUED)
-	 * - 반환: 생성된 VideoJob ID
-	 */
 	@Transactional
 	public Long generateAndPersist(Long experienceId,
 		Long userId,

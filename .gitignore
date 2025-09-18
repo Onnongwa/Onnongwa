@@ -26,4 +26,14 @@ replay_pid*
 # Google Cloud Service Account Keys
 keys/
 
-.envback-end/.env
+
+# 영상 파일
+./media
+
+.env
+
+# Windows reserved names
+nul
+con
+prn
+aux
