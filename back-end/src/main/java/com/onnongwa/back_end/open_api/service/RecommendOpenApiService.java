@@ -74,7 +74,7 @@ public class RecommendOpenApiService {
         marketComment:
         {
           "summary": "요약 문장",
-          "insight": ["통찰1","통찰2","통찰3"],
+          "insight": ["통찰1","통찰2"],
           "consideration": ["고려1","고려2"],
           "caution": ["유의1"]
         }
@@ -82,7 +82,7 @@ public class RecommendOpenApiService {
         farmComment:
         {
           "summary": "요약 문장",
-          "strength": ["역량1","역량2","역량3"],
+          "strength": ["역량1","역량2"],
           "improvement": ["개선1","개선2"],
           "risk": ["리스크1"]
         }
@@ -131,7 +131,7 @@ public class RecommendOpenApiService {
         ChatRequest body = new ChatRequest(
                 model,
                 messages,
-                2048,
+                4096,
                 1.0
         );
 
