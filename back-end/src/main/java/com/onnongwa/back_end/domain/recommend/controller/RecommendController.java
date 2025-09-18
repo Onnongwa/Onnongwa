@@ -17,7 +17,6 @@ public class RecommendController {
 
     @PostMapping
     public ResponseEntity<?> createRecommend(@RequestBody RecommendRequestDTO recommendReqDTO){
-        recommendService.createRecommend(recommendReqDTO);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(recommendService.createRecommend(recommendReqDTO));
     }
 }
