@@ -35,7 +35,6 @@ export default function SignupPage() {
 
         setIsLoading(true);
         try {
-            console.log("일단 실행은 됨");
             const res = await fetch(`${API_BASE}/api/v1/signup`, {
                 method: "POST",                          
                 headers: { "Content-Type": "application/json" }, 
@@ -47,7 +46,6 @@ export default function SignupPage() {
                     password: form.password,
                 }),
             });
-            console.log("일단 실행은 됨2");
 
             if (!res.ok) {
                 const msg = await res.text();
