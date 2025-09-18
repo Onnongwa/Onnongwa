@@ -5,18 +5,18 @@
     },
     "title": {
       "type": "text",
-      "analyzer": "korean_analyzer",
-      "search_analyzer": "korean_analyzer"
+      "analyzer": "korean_index_analyzer",
+      "search_analyzer": "korean_search_analyzer"
     },
     "description": {
       "type": "text",
-      "analyzer": "korean_analyzer",
-      "search_analyzer": "korean_analyzer"
+      "analyzer": "korean_index_analyzer",
+      "search_analyzer": "korean_search_analyzer"
     },
     "location": {
       "type": "text",
-      "analyzer": "korean_analyzer",
-      "search_analyzer": "korean_analyzer"
+      "analyzer": "korean_index_analyzer",
+      "search_analyzer": "korean_search_analyzer"
     },
     "placeType": {
       "type": "keyword"
