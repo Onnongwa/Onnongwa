@@ -25,3 +25,5 @@ replay_pid*
 
 # Google Cloud Service Account Keys
 keys/
+
+.envback-end/.env
