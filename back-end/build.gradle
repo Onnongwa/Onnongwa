@@ -34,7 +34,6 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch:3.3.11'
-	implementation 'co.elastic.clients:elasticsearch-java:8.10.4'
 
 	implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 }
