@@ -3,6 +3,7 @@ package com.onnongwa.back_end.domain.experience.controller;
 import java.io.IOException;
 import java.util.Map;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpOnboardingDto;
 import com.onnongwa.back_end.domain.experience.controller.dto.ExpRegisterDto;
+import com.onnongwa.back_end.domain.experience.elasticsearch.document.ExperienceDocument;
+import com.onnongwa.back_end.domain.experience.service.ExperienceSearchService;
 import com.onnongwa.back_end.domain.experience.service.ExperienceService;
 import com.onnongwa.back_end.open_api.service.OpenApiService;
 
@@ -27,8 +30,19 @@ import lombok.RequiredArgsConstructor;
 public class ExperienceController {
 
 	private final ExperienceService experienceService;
+	private final ExperienceSearchService experienceSearchService;
 	private final OpenApiService openApiService;
 
+
+	@GetMapping("/search")
+	public ResponseEntity<Page<ExperienceDocument>> experienceSearch(
+		@RequestParam(required = false) String title,
+		@RequestParam(required = false) String keyword,
+		@RequestParam(defaultValue = "0") int page,
+		@RequestParam(defaultValue = "10") int size){
+		return ResponseEntity.status(HttpStatus.OK)
+			.body(experienceSearchService.findAutoCompleteSuggestionByKeyword(title,keyword,page,size));
+	}
 
 	@PostMapping
 	public ResponseEntity<?> registerExperience(@RequestBody ExpRegisterDto dto){
@@ -64,6 +78,4 @@ public class ExperienceController {
 		return ResponseEntity.status(HttpStatus.OK)
 			.body(Map.of("url", url));
 	}
-
-
 }
