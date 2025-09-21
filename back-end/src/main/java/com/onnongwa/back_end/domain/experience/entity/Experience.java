@@ -23,6 +23,7 @@ public class Experience {
 
     // 기본 정보
     private String title;           // 제목
+    @Column(length = 1000)
     private String description;     // 설명
     private String location;        // 지역 (ex: 강원도 평창군)
     private String duration;        // 총 소요 시간 (ex: "약 5시간")

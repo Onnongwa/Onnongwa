@@ -36,3 +36,6 @@ openai:
     key: ${OPENAI_API_KEY}
     url: https://api.openai.com/v1/chat/completions
     model : gpt-4
+
+elasticsearch:
+  host: ${ELASTICSEARCH_HOST}
