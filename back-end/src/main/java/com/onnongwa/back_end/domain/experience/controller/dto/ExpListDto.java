@@ -13,6 +13,6 @@ public record ExpListDto(
 	@JsonProperty("description") String description,
 	@JsonProperty("location") String location,
 	@JsonProperty("price") int price,
-	@JsonProperty("hasTag") List<String> hashTag
+	@JsonProperty("hashTag") List<String> hashTag
 ) {
 }
