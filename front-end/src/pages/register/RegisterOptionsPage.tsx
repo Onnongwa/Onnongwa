@@ -41,7 +41,7 @@ export default function RegisterOptionsPage() {
                             기존 체험 정보를 입력하면 AI가 매력적인 홍보글을 자동으로 작성하여 등록을 돕습니다.
                         </p>
                         <Link
-                            to="/register/ai-generate"
+                            to="/register/onboarding"
                             className="w-full inline-block px-4 py-2 rounded bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                             직접 등록하기

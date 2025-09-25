@@ -11,35 +11,100 @@ type ScheduleItem = { time: string; activity: string };
 export default function GenerateOnboardingPage() {
     const navigate = useNavigate();
 
+    const API_BASE = "http://localhost:8080/api/v1/experience"
+    const IMAGE_SERVER_BASE = "http://localhost:8080";
     // 진행 단계
     const totalSteps = 12;
     const [currentStep, setCurrentStep] = useState(1);
 
     // 폼 상태
+    // step 1
     const [title, setTitle] = useState("");
-    const [region, setRegion] = useState("");
-    const [address, setAddress] = useState("");
-    const [placeType, setPlaceType] = useState<"indoor" | "outdoor">("indoor");
-    const [regionType, setRegionType] = useState<"rural" | "fishing">("rural");
-    const [description, setDescription] = useState("");
-    const [crops, setCrops] = useState("");
-    const [price, setPrice] = useState<string>("");
-    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]);
-    const [newScheduleTime, setNewScheduleTime] = useState("");
-    const [newScheduleActivity, setNewScheduleActivity] = useState("");
-    const [startTime, setStartTime] = useState("");
-    const [endTime, setEndTime] = useState("");
-    const [selectedClosedDays, setSelectedClosedDays] = useState<string[]>([]);
-    const [minParticipants, setMinParticipants] = useState<number | "">("");
-    const [maxParticipants, setMaxParticipants] = useState<number | "">("");
-    const [hostName, setHostName] = useState("");
-    const [hostPhone, setHostPhone] = useState("");
-    const [hostEmail, setHostEmail] = useState("");
-    const [farmName, setFarmName] = useState("");
+    // step 2
+    const [imageUrl, setImageUrl] = useState<string | null>(null);
+    // step 3
+    const [region, setRegion] = useState(""); // 도 시 군
+    const [address, setAddress] = useState(""); // 상세 주소
+    // step 4
+    const [placeType, setPlaceType] = useState<"indoor" | "outdoor">("indoor"); // 실내 or 실외
+    // step 5
+    const [regionType, setRegionType] = useState<"rural" | "fishing">("rural"); // 농촌 or 어촌
+    // step 6
+    const [description, setDescription] = useState(""); //체험 소개 설명
+    // step 7
+    const [crops, setCrops] = useState(""); // 체험과 관련된 상품
+    // step 8
+    const [price, setPrice] = useState<string>(""); // 참가비
+    // step 9
+    const [scheduleItems, setScheduleItems] = useState<ScheduleItem[]>([]); // 보내질 스케줄
+    const [newScheduleTime, setNewScheduleTime] = useState(""); // 키로 사용된 일정 시간
+    const [newScheduleActivity, setNewScheduleActivity] = useState(""); // 값 일정 내용
+    // step 10
+    const [startTime, setStartTime] = useState(""); // 운영 시작 시간
+    const [endTime, setEndTime] = useState(""); // 운영 마지막 시간
+    const [selectedClosedDays, setSelectedClosedDays] = useState<string[]>([]); // 휴무일
+    // step 11
+    const [minParticipants, setMinParticipants] = useState<number | "">(""); // 참가 최소 인원
+    const [maxParticipants, setMaxParticipants] = useState<number | "">(""); // 참가 최대 인원
+    // step 12
+    const [hostName, setHostName] = useState(""); // 농장주명
+    const [hostPhone, setHostPhone] = useState(""); // 연락처
+    const [hostEmail, setHostEmail] = useState(""); // 이메일
+    const [farmName, setFarmName] = useState(""); // 농장명
 
     const progress = (currentStep / totalSteps) * 100;
 
-    const handleNext = () => setCurrentStep((s) => Math.min(s + 1, totalSteps));
+
+    // 유효성 검사
+    const validateStep = (step: number): boolean => {
+        switch (step) {
+            case 1:
+                return title.trim() !== "";
+            case 2:
+                // 이미지 업로드 기능 미구현 → 예시로는 통과시킴
+                return true;
+            case 3:
+                return region.trim() !== "" && address.trim() !== "";
+            case 4:
+                return placeType === "indoor" || placeType === "outdoor";
+            case 5:
+                return regionType === "rural" || regionType === "fishing";
+            case 6:
+                return description.trim() !== "";
+            case 7:
+                return crops.trim() !== "";
+            case 8:
+                return price.trim() !== "" && !isNaN(Number(price));
+            case 9:
+                return scheduleItems.length > 0;
+            case 10:
+                return startTime.trim() !== "" && endTime.trim() !== "";
+            case 11:
+                return (
+                    minParticipants !== "" &&
+                    maxParticipants !== "" &&
+                    Number(minParticipants) > 0 &&
+                    Number(maxParticipants) >= Number(minParticipants)
+                );
+            case 12:
+                return (
+                    hostName.trim() !== "" &&
+                    hostPhone.trim() !== "" &&
+                    hostEmail.trim() !== "" &&
+                    farmName.trim() !== ""
+                );
+            default:
+                return true;
+        }
+    };
+
+    const handleNext = () => {
+        if (!validateStep(currentStep)) {
+            alert("필수 정보를 모두 입력해주세요.");
+            return;
+        }
+        setCurrentStep((s) => Math.min(s + 1, totalSteps));
+    }
     const handlePrevious = () => setCurrentStep((s) => Math.max(s - 1, 1));
 
     const handleAddSchedule = () => {
@@ -55,14 +120,70 @@ export default function GenerateOnboardingPage() {
 
     const daysOfWeek = ["월요일", "화요일", "수요일", "목요일", "금요일", "토요일", "일요일"];
 
-    const finish = () => {
+
+    // 폼데이터로 전송할 수 없기에 이미지 등록시 서버에 이미지를 먼저 저장하고 url을 json으로 보내는 방식 채택
+    // step2. 이미지 업로드 함수
+    const uploadImage = async (file: File): Promise<string | null> => {
+        const formData = new FormData();
+        formData.append("file", file);
+
+        try {
+            const response = await fetch(`${API_BASE}/imgupload`, {
+                method: "POST",
+                body: formData,
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error("이미지 업로드 실패:", errorText);
+                alert("이미지 업로드에 실패했습니다.");
+                return null;
+            }
+
+            const data = await response.json();
+            // 서버에서 반환된 이미지 URL
+            return data.url;
+        } catch (error) {
+            console.error("이미지 업로드 중 오류:", error);
+            alert("이미지 업로드 중 오류가 발생했습니다.");
+            return null;
+        }
+    };
+
+    const finish = async ()  => {
+
         const payload = {
-            title, region, address, placeType, regionType, description, crops, price,
+            title,imageUrl, region, address, placeType, regionType, description, crops, price,
             scheduleItems, startTime, endTime, selectedClosedDays,
             minParticipants, maxParticipants, host: { hostName, hostPhone, hostEmail, farmName },
         };
         console.log("onboarding payload:", payload);
-        navigate("/register/ai-generate/review");
+
+        try {
+            const response = await fetch(  `${API_BASE}/onboarding`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json", // JSON 형식임을 명시
+                },
+                body: JSON.stringify(payload), // 객체를 JSON 문자열로 변환
+            });
+
+            if (!response.ok) {
+                // 200~299 범위가 아닌 경우 에러 처리
+                const errorText = await response.text();
+                console.error("서버 응답 오류:", errorText);
+                alert("체험 등록에 실패했습니다.");
+                return;
+            }
+
+            const result = await response.json();
+            console.log("서버 응답:", result);
+
+            navigate("/register/ai-generate",  { state: { result } });
+        } catch (error) {
+            console.error("요청 실패:", error);
+            alert("서버와 통신 중 오류가 발생했습니다.");
+        }
     };
 
     const Step = () => {
@@ -93,12 +214,42 @@ export default function GenerateOnboardingPage() {
                     <div className="space-y-4">
                         <label className="block text-lg font-medium">2. 체험 대표 이미지를 등록해주세요.</label>
                         <div className="flex flex-col sm:flex-row gap-4 items-center">
-                            <div className="w-full sm:w-64 h-40 border-2 border-dashed rounded-lg flex items-center justify-center text-sm text-gray-500">
-                                <ImageIcon className="h-10 w-10" />
-                                <span className="sr-only">이미지 미리보기</span>
+                            {/* 이미지 미리보기 */}
+                            <div className="w-full sm:w-64 h-40 border-2 border-dashed rounded-lg flex items-center justify-center text-sm text-gray-500 overflow-hidden">
+                                {imageUrl ? (
+                                    <img
+                                        src={imageUrl}
+                                        alt="대표 이미지"
+                                        className="w-full h-full object-cover rounded"
+                                    />
+                                ) : (
+                                    <>
+                                        <ImageIcon className="h-10 w-10" />
+                                        <span className="sr-only">이미지 미리보기</span>
+                                    </>
+                                )}
                             </div>
+
+                            {/* 이미지 선택 버튼 */}
                             <div className="flex flex-col gap-2 w-full sm:w-auto">
-                                <button className="border rounded px-4 py-2">이미지 선택</button>
+                                <label className="border rounded px-4 py-2 cursor-pointer text-center">
+                                    이미지 선택
+                                    <input
+                                        type="file"
+                                        accept="image/*"
+                                        className="hidden"
+                                        onChange={ async ( e) => {
+                                            const file = e.target.files?.[0];
+                                            if (!file) return;
+
+                                            const uploadedUrl = await uploadImage(file);
+                                            if (!uploadedUrl) return;
+
+                                            const url =`${IMAGE_SERVER_BASE}${uploadedUrl}`;
+                                            setImageUrl(url);
+                                        }}
+                                    />
+                                </label>
                             </div>
                         </div>
                     </div>

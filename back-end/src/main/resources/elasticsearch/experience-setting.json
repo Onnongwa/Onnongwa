@@ -1,0 +1,29 @@
+{
+  "analysis": {
+    "tokenizer": {
+      "edge_ngram_tokenizer": {
+        "type": "edge_ngram",
+        "min_gram": 2,
+        "max_gram": 20,
+        "token_chars": ["letter", "digit", "hangul"]
+      }
+    },
+    "analyzer": {
+      "korean_index_analyzer": {
+        "type": "custom",
+        "tokenizer": "edge_ngram_tokenizer",
+        "filter": [
+          "lowercase"
+        ]
+      },
+      "korean_search_analyzer": {
+        "type": "custom",
+        "tokenizer": "nori_tokenizer",
+        "filter": [
+          "nori_part_of_speech",
+          "lowercase"
+        ]
+      }
+    }
+  }
+}
