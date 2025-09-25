@@ -16,7 +16,7 @@ public class PollScheduler {
 	private final RunwayService runwayService;
 
 	// 5초마다 전체 RENDERING 씬 상태 갱신 → result_url 채움 → 모두 끝나면 합성
-	@Scheduled(fixedDelay = 5000)
+	@Scheduled(fixedDelay = 15000)
 	public void pollAll() {
 		try {
 			runwayService.pollAllRendering();

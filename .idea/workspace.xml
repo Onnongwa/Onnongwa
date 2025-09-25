@@ -5,21 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3e409e96-21c6-4b71-beac-50a660bc0b9e" name="Changes" comment="yml 파일 변경">
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources.local.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/mysql.osA4Bg.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/dataSources/90fcdf46-0fda-49bc-ae10-cf060cbdd20f/storage_v2/_src_/schema/sys.zb4BAA.meta" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/controller/JobController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/controller/RenderController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/controller/SceneController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/JobTtsService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/JobTtsService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/PromptService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/PromptService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoComposerService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoComposerService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoJobService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/VideoJobService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/src/main/resources/.env" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/RunwayService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/onnongwa/back_end/domain/video/service/RunwayService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +38,13 @@
         </projects_view>
       </state>
     </system>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -76,27 +74,28 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;feature/text2video&quot;,
-    &quot;junie.onboarding.icon.badge.shown&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "feature/text2video",
+    "junie.onboarding.icon.badge.shown": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "ts.external.directory.path": "C:\\Users\\USER\\IdeaProjects\\Onnongwa\\front-end\\node_modules\\typescript\\lib",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;DatabaseDriversLRU&quot;: [
-      &quot;mysql&quot;
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\USER\IdeaProjects\Onnongwa\back-end\src\main\resources" />
@@ -145,6 +144,7 @@
       <workItem from="1758117355203" duration="1757000" />
       <workItem from="1758164757945" duration="12834000" />
       <workItem from="1758199162878" duration="5766000" />
+      <workItem from="1758764507913" duration="2911000" />
     </task>
     <task id="LOCAL-00001" summary="yml 파일 변경">
       <option name="closed" value="true" />

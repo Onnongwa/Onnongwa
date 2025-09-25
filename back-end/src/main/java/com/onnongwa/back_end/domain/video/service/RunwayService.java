@@ -22,14 +22,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RunwayService {
 
-	/** Runway Dev API가 허용하는 해상도 비율(문자열) */
 	private static final Set<String> ALLOWED_RATIOS = Set.of(
 		"1280:720", "720:1280", "1104:832", "832:1104", "960:960", "1584:672"
 	);
 	private static final String RATIO_SHORTS = "720:1280";
 	private static final int DURATION_SEC = 5;
 
-	/** 공통 프롬프트(간결) */
 	private static final String DEFAULT_PROMPT_KO =
 		"당신은 Runway 비디오 생성을 위한 영상 연출자입니다. 각 장면(scene)마다 하나의 정지 이미지를 참고 이미지로 제공합니다.\n" +
 			"목표:\n" +
