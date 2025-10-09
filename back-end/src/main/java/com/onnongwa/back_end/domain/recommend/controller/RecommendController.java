@@ -1,7 +1,9 @@
 package com.onnongwa.back_end.domain.recommend.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.onnongwa.back_end.domain.recommend.controller.dto.RecommendRequestDTO;
 import com.onnongwa.back_end.domain.recommend.service.RecommendService;
+import com.onnongwa.back_end.open_api.dto.RecommendDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +19,7 @@ public class RecommendController {
 
     @PostMapping
     public ResponseEntity<?> createRecommend(@RequestBody RecommendRequestDTO recommendReqDTO){
-        recommendService.createRecommend(recommendReqDTO);
-        return ResponseEntity.ok().build();
+        RecommendDTO dto = recommendService.createRecommend(recommendReqDTO);
+        return ResponseEntity.ok(dto);
     }
 }
