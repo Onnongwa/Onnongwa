@@ -111,9 +111,14 @@
 
 <br>
 
+# ERD
+<img  width="675" height="452" alt="image" src="https://github.com/user-attachments/assets/b1799f1c-ee5d-49a1-80f3-14e5a0ef09be" />
+
+<br>
+
 # ☁️ 인프라 아키텍처
 
-<img  width="675" height="452" alt="image" src="https://github.com/user-attachments/assets/b1799f1c-ee5d-49a1-80f3-14e5a0ef09be" />
+
 
 
 
