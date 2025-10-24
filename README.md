@@ -26,7 +26,7 @@
 <br>
 
 # ⚙️ 주요 기능
-  ## 1. 사용자가 입력한 작물, 지역 등을 기반으로 Python 데이터 수집 서비스와 연동하여 관련 트렌드를 분석하고, OpenAI API를 통해 맞춤형 농촌 체험 프로그램 3가지를 추천
+  ## 1. 사용자가 입력한 작물, 지역 등을 기반으로 관련 트렌드를 수집하고, OpenAI API를 통해 맞춤형 농촌 체험 프로그램 3가지를 추천
   <div align="center">
     <img width="400" height="463" alt="image" src="https://github.com/user-attachments/assets/bba03246-58b0-435b-bec8-46e49b4442b2" />
     <img width="400" height="463" alt="image" src="https://github.com/user-attachments/assets/d486384a-4373-47e7-b94a-d9e8ce510c9f" />
