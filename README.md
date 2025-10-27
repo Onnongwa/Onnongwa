@@ -133,5 +133,5 @@
 
 ## 1️⃣ [데이터 수집 과정에서 Selenium 크롤링 이슈 해결](https://github.com/Onnongwa/Onnongwa/wiki/%5B%ED%8A%B8%EB%9F%AC%EB%B8%94%EC%8A%88%ED%8C%85%5D%5BPython%5D-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%88%98%EC%A7%91-%EA%B3%BC%EC%A0%95%EC%97%90%EC%84%9C-Selenium-%ED%81%AC%EB%A1%A4%EB%A7%81-%EC%9D%B4%EC%8A%88-%ED%95%B4%EA%B2%B0)
 
-
+## 2️⃣ [_class 필드로 인한 JSON 역직렬화 예외 해결](https://github.com/Onnongwa/Onnongwa/wiki/%5B%ED%8A%B8%EB%9F%AC%EB%B8%94%EC%8A%88%ED%8C%85%5D%5BElasticsearch%5D-_class-%ED%95%84%EB%93%9C%EB%A1%9C-%EC%9D%B8%ED%95%9C-JSON-%EC%97%AD%EC%A7%81%EB%A0%AC%ED%99%94-%EC%98%88%EC%99%B8-%ED%95%B4%EA%B2%B0)
 
