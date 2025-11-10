@@ -38,6 +38,15 @@
 <br>
 
  ## 2. OpenAI API를 활용해 기존 체험 정보를 마케팅 관점에서 자연스럽고 매력적인 문체로 재작성하고, 프로그램 일정·하이라이트·해시태그 등을 자동 생성
+<div align="center">
+  <img width="574" height="599" alt="화면 캡처 2025-11-10 123929" src="https://github.com/user-attachments/assets/917066d9-e9ef-416b-90e2-12a1b748378d" />
+  <img width="576" height="617" alt="화면 캡처 2025-11-10 123950" src="https://github.com/user-attachments/assets/00972dc9-9ea4-45c4-a87c-eafcd85aa51c" />
+  <img width="559" height="621" alt="화면 캡처 2025-11-10 124050" src="https://github.com/user-attachments/assets/7b8568a6-73ec-4a76-8fc9-9f14b06f4614" />
+</div>
+
+
+
+
 
 <br>
 
