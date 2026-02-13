@@ -23,11 +23,21 @@
 hs_err_pid*
 replay_pid*
 
+# Google Cloud Service Account Keys
+keys/
 
 # IntelliJ IDEA
 .idea/
 
 #img upload file
 ./uploads
+# 영상 파일
+./media
 
 .env
+
+# Windows reserved names
+nul
+con
+prn
+aux

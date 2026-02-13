@@ -1,0 +1,35 @@
+### 환경 변수
+@baseUrl = http://localhost:8080
+@experienceId = 2
+@userId = 1
+@jobId = 1
+@filePath = C:/Users/USER/IdeaProjects/Onnongwa/media/jobs/11/final.mp4
+
+### 1) 영상 생성 트리거 (대본 생성 + Job/Scene 저장 + Runway 제출)
+# @name generateVideo
+POST {{baseUrl}}/api/videos/experiences/{{experienceId}}/generate?userId={{userId}}
+Content-Type: application/json
+
+{
+  "title": "테스트 홍보 영상",
+  "templateVersion": "v1"
+}
+
+> {%
+    const body = JSON.parse(response.body);
+    if (!body.jobId) throw new Error("jobId가 응답에 없습니다.");
+    client.global.set("jobId", String(body.jobId));
+    client.log("✅ Created jobId = " + body.jobId);
+%}
+
+
+### 2) 유튜브 업로드 트리거 (최종 mp4 업로드)
+# @name uploadToYouTube
+POST {{baseUrl}}/api/video-jobs/{{jobId}}/youtube-upload?filePath={{filePath}}
+
+> {%
+    const body = JSON.parse(response.body);
+    if (!body.videoId) throw new Error("videoId가 응답에 없습니다.");
+    client.global.set("youtubeVideoId", body.videoId);
+    client.log("Uploaded! https://youtu.be/" + body.videoId);
+%}
